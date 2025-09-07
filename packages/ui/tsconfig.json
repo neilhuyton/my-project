@@ -14,7 +14,7 @@
     "declaration": true,
     "declarationMap": true
   },
-  "include": ["src/**/*"], // Explicitly include all source files
+  "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"],
   "references": []
 }

@@ -3,7 +3,8 @@
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": ["vite/client"]
   },
-  "include": ["vite.config.ts", "tailwind.config.js"]
+  "include": ["vite.config.ts"]
 }

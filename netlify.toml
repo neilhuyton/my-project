@@ -1,0 +1,13 @@
+[build]
+  command = "pnpm --sequential -r build"
+  publish = "packages/site1/dist"
+  functions = "packages/server/dist/functions"
+
+[dev]
+  command = "pnpm --filter @my-project/site1 dev"
+  framework = "#custom"
+  targetPort = 5173
+  port = 8888
+  functions = "packages/server/dist/functions"
+  functionsPort = 8888
+  autoLaunch = true

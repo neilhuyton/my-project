@@ -9,7 +9,6 @@
   "include": [
     "vite.config.ts",
     "vitest.config.ts",
-    "vitest.setup.ts",
-    "tailwind.config.js"
+    "vitest.setup.ts"
   ]
 }

@@ -1,12 +1,13 @@
 {
   "name": "@my-project/server",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "netlify functions:serve --port 8888"
   },
   "dependencies": {
-    "@trpc/server": "^10.45.2",
+    "@trpc/server": "^11.0.0-rc.593",
     "zod": "^3.23.8",
     "@netlify/functions": "^2.8.2"
   },

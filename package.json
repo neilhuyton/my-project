@@ -2,5 +2,9 @@
   "name": "my-project",
   "version": "1.0.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --sequential -r build",
+    "dev": "pnpm --filter @my-project/site1 dev"
+  }
 }

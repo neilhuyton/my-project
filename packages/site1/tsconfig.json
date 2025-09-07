@@ -1,17 +1,19 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src",
-    "jsx": "react-jsx",
+    "strict": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
     "paths": {
-      "@my-project/ui": ["../ui/src/index"],
-      "@/*": ["src/*"]
-    }
-  },
-  "include": ["src"],
-  "references": [
-    { "path": "../ui/tsconfig.json" }
-  ]
+      "@my-project/server/*": ["../server/src/*"],
+      "@my-project/ui/*": ["../ui/dist/*"]
+    },
+    "noEmit": true
+  }
 }

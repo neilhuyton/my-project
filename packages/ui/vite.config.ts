@@ -5,11 +5,7 @@ import { resolve } from "path";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-    dts({ rollupTypes: true }), // Generate .d.ts files
-  ],
+  plugins: [react(), tailwindcss(), dts({ rollupTypes: true })],
   css: {
     preprocessorOptions: {
       css: {
