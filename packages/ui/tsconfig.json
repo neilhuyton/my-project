@@ -12,7 +12,8 @@
     },
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "emitDeclarationOnly": false
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"],

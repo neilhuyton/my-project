@@ -3,24 +3,28 @@ import ReactDOM from "react-dom/client";
 import { Button } from "@my-project/ui";
 import { trpc, queryClient, trpcClient } from "./trpc";
 import { QueryClientProvider } from "@tanstack/react-query";
+import "@my-project/ui/index.css";
 
-function App() {
-  const { data } = trpc.greeting.useQuery({ name: "Test" });
+const App = () => {
+  const { data, error, isLoading } = trpc.greeting.useQuery({ name: "Test" });
+
   return (
-    <div>
-      <h1>Site1 Demo</h1>
-      <Button onClick={() => alert("Clicked from Site1!")}>Site1 Button</Button>
-      <div>{data?.message}</div>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Site1</h1>
+      {isLoading && <p>Loading...</p>}
+      {error && <p>Error: {error.message}</p>}
+      {data && <p>{data.message}</p>}
+      <Button onClick={() => alert("Clicked!")}>Click Me</Button>
     </div>
   );
-}
+};
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <App />
-      </QueryClientProvider>
-    </trpc.Provider>
+      </trpc.Provider>
+    </QueryClientProvider>
   </React.StrictMode>
 );

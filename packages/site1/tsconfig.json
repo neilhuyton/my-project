@@ -1,19 +1,24 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "strict": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "target": "ESNext",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
+    "outDir": "dist",
+    "rootDir": "src",
     "jsx": "react-jsx",
-    "types": ["vite/client"],
+    "baseUrl": ".",
+    "types": ["node", "@types/react", "@types/react-dom", "vite/client"],
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
     "paths": {
-      "@my-project/server/*": ["../server/src/*"],
+      "@my-project/server": ["../server/dist/router.d.ts"],
+      "@my-project/server/*": ["../server/dist/*"],
+      "@my-project/ui": ["../ui/dist/index.d.ts"],
       "@my-project/ui/*": ["../ui/dist/*"]
-    },
-    "noEmit": true
-  }
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"],
+  "references": [{ "path": "../server" }, { "path": "../ui" }]
 }

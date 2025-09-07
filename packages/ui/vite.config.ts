@@ -5,7 +5,11 @@ import { resolve } from "path";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), dts({ rollupTypes: true })],
+  plugins: [
+    react(),
+    tailwindcss(),
+    dts({ rollupTypes: true, include: ["src"], outDir: "dist" })
+  ],
   css: {
     preprocessorOptions: {
       css: {
@@ -27,12 +31,11 @@ export default defineConfig({
           react: "React",
           "react-dom": "ReactDOM",
         },
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name === "style.css") return "index.css";
-          return assetInfo.name;
-        },
+        assetFileNames: "index.css",
       },
     },
+    sourcemap: true,
     copyPublicDir: false,
+    minify: false, // For debugging
   },
 });

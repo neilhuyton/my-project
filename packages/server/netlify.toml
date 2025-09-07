@@ -1,0 +1,6 @@
+[build]
+  functions = "dist/functions"
+
+[dev]
+  functions = "dist/functions"
+  functionsPort = 8888

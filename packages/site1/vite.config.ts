@@ -9,18 +9,19 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/.netlify/functions": {
+      "/trpc": {
         target: "http://localhost:8888",
         changeOrigin: true,
         rewrite: (path: string) =>
-          path.replace(/^\/\.netlify\/functions/, "/trpc"),
+          path.replace(/^\/trpc/, "/.netlify/functions/trpc"),
       },
     },
   },
   resolve: {
     alias: {
-      "@my-project/server": path.resolve(__dirname, "../server/src"),
+      "@my-project/server": path.resolve(__dirname, "../server/dist/router.js"),
       "@my-project/ui": path.resolve(__dirname, "../ui/dist"),
     },
   },
+  logLevel: "info",
 });
