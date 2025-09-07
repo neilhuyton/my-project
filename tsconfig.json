@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Bundler", // Supports Vite and ESM
+    "moduleResolution": "Bundler",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -10,5 +10,13 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true
-  }
+  },
+  "references": [
+    { "path": "./packages/ui/tsconfig.json" },
+    { "path": "./packages/ui/tsconfig.node.json" },
+    { "path": "./packages/site1/tsconfig.json" },
+    { "path": "./packages/site1/tsconfig.node.json" }
+  ],
+  "include": [], // Avoid including files at root
+  "exclude": ["node_modules", "dist"]
 }
