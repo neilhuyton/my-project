@@ -16,7 +16,7 @@
     { "path": "./packages/ui/tsconfig.node.json" },
     { "path": "./packages/site1/tsconfig.json" },
     { "path": "./packages/site1/tsconfig.node.json" },
-    { "path": "./packages/server/tsconfig.json" }
+    { "path": "./packages/auth/tsconfig.json" }
   ],
   "include": [],
   "exclude": ["node_modules", "dist"]
