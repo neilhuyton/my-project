@@ -1,0 +1,19 @@
+[build]
+  command = "pnpm --sequential -r build && mkdir -p .netlify/functions-internal && cp ../auth/dist/functions/trpc.js .netlify/functions-internal/trpc.js"
+  publish = "dist"
+  functions = ".netlify/functions-internal"
+  external_node_modules = ["@my-project/site2"]
+
+[dev]
+  command = "pnpm --filter @my-project/site2 dev"
+  framework = "#custom"
+  targetPort = 5173
+  port = 8888
+  functions = ".netlify/functions-internal"
+  functionsPort = 8888
+  autoLaunch = true
+
+[[redirects]]
+  from = "/trpc/*"
+  to = "/.netlify/functions/trpc/:splat"
+  status = 200

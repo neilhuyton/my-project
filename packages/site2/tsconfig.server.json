@@ -23,6 +23,6 @@
       "@my-project/site2/prisma/client/*": ["./prisma/client/*"]
     }
   },
-  "include": ["src/serverContext.ts", "src/prisma.ts"],
+  "include": ["src/prisma.ts"],
   "exclude": ["dist", "node_modules"]
 }

@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "dotenv -e ../../.env -- pnpm prisma generate && tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo",
-    "build:server": "dotenv -e ../../.env -- pnpm prisma generate && tsc -p tsconfig.server.json --noEmitOnError false",
-    "dev": "dotenv -e ../../.env -- pnpm prisma generate && vite",
+    "build": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo'",
+    "build:server": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 tsc -p tsconfig.server.json --noEmitOnError false'",
+    "dev": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 vite'",
     "preview": "vite preview",
     "prisma": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma generate'",
-    "prisma:migrate": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma migrate dev'",
-    "tsc": "tsc"
+    "prisma:migrate": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma migrate dev'"
   },
   "dependencies": {
     "@my-project/ui": "1.0.0",
