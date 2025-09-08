@@ -20,6 +20,9 @@ importers:
       '@my-project/site1':
         specifier: 1.0.0
         version: link:../site1
+      '@my-project/site2':
+        specifier: 1.0.0
+        version: link:../site2
       '@netlify/functions':
         specifier: ^2.8.2
         version: 2.8.2

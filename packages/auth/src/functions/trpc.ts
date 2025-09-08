@@ -1,7 +1,14 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "../router";
 import { HandlerEvent } from "@netlify/functions";
-import { PrismaClient } from "@my-project/site1/prisma/client";
+import type { PrismaClient } from "@my-project/site1/prisma/client";
+
+// Map siteId to package paths
+const sitePackageMap: Record<string, string> = {
+  site1: "@my-project/site1/prisma/client",
+  site2: "@my-project/site2/prisma/client",
+  // Add more sites here as needed
+};
 
 export const handler = async (event: HandlerEvent) => {
   const corsHeaders = {
@@ -22,28 +29,24 @@ export const handler = async (event: HandlerEvent) => {
 
   const siteId = event.headers["x-site-id"] || "site1";
   const dbUrl = process.env[`DATABASE_URL_${siteId.toUpperCase()}`];
+  const packagePath = sitePackageMap[siteId];
 
-  if (!dbUrl) {
-    console.error(`No DATABASE_URL found for siteId: ${siteId}`);
+  if (!dbUrl || !packagePath) {
+    console.error(`No DATABASE_URL or package found for siteId: ${siteId}`);
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        error: `No database URL configured for site: ${siteId}`,
-      }),
+      body: JSON.stringify({ error: `No configuration for site: ${siteId}` }),
     };
   }
 
-  const prisma = new PrismaClient({
-    datasources: {
-      db: {
-        url: dbUrl,
-      },
-    },
+  const { PrismaClient } = await import(packagePath);
+  const prisma: PrismaClient = new PrismaClient({
+    datasources: { db: { url: dbUrl } },
   });
 
   try {
-    console.log("DB URL in function:", dbUrl.replace(/:([^:@]+)@/, ":***@")); // Mask password for logging
+    console.log("DB URL in function:", dbUrl.replace(/:([^:@]+)@/, ":***@"));
 
     const path = event.path.replace(/^\/\.netlify\/functions\/trpc\/?/, "");
     const queryString = event.queryStringParameters
