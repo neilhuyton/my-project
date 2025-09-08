@@ -1,0 +1,42 @@
+{
+  "name": "@my-project/site2",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "dotenv -e ../../.env -- pnpm prisma generate && tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo",
+    "build:server": "dotenv -e ../../.env -- pnpm prisma generate && tsc -p tsconfig.server.json --noEmitOnError false",
+    "dev": "dotenv -e ../../.env -- pnpm prisma generate && vite",
+    "preview": "vite preview",
+    "prisma": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma generate'",
+    "prisma:migrate": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma migrate dev'",
+    "tsc": "tsc"
+  },
+  "dependencies": {
+    "@my-project/ui": "1.0.0",
+    "@my-project/auth": "1.0.0",
+    "@tanstack/react-query": "^5.59.13",
+    "@trpc/client": "^11.5.1",
+    "@trpc/react-query": "^11.5.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "@prisma/client": "^5.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.2",
+    "typescript": "^5.9.2",
+    "vite": "^5.4.8",
+    "prisma": "^5.22.0"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./prisma/client": "./prisma/client/index.js",
+    "./prisma/client/*": "./prisma/client/*",
+    "./serverContext": {
+      "import": "./dist/serverContext.js",
+      "types": "./dist/serverContext.d.ts"
+    }
+  }
+}
