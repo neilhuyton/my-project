@@ -1,7 +1,9 @@
 import { initTRPC } from "@trpc/server";
+import { PrismaClient } from "@my-project/site1/prisma/client";
 
-type Context = {
+export type Context = {
   siteId: string;
+  prisma: PrismaClient;
 };
 
 const t = initTRPC.context<Context>().create();

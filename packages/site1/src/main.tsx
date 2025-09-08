@@ -6,14 +6,20 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import "@my-project/ui/index.css";
 
 const App = () => {
-  const { data, error, isLoading } = trpc.greeting.useQuery({ name: "Test" });
+  const { data: users, error, isLoading } = trpc.getUsers.useQuery();
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Site1</h1>
-      {isLoading && <p>Loading...</p>}
+      {isLoading && <p>Loading users...</p>}
       {error && <p>Error: {error.message}</p>}
-      {data && <p>{data.message}</p>}
+      {users && (
+        <ul>
+          {users.map((email: string) => (
+            <li key={email}>{email}</li>
+          ))}
+        </ul>
+      )}
       <Button onClick={() => alert("Clicked!")}>Click Me</Button>
     </div>
   );

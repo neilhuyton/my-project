@@ -10,15 +10,24 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "noEmitOnError": false,
     "paths": {
-      "@my-project/auth": ["../auth/dist/router.d.ts"],
-      "@my-project/auth/*": ["../auth/dist/*"],
       "@my-project/ui": ["../ui/dist/index.d.ts"],
-      "@my-project/ui/*": ["../ui/dist/*"]
+      "@my-project/ui/*": ["../ui/dist/*"],
+      "@my-project/site1": ["./src"],
+      "@my-project/site1/*": ["./src/*"],
+      "@my-project/site1/prisma/client": ["./prisma/client/index.d.ts"],
+      "@my-project/site1/serverContext": ["./dist/serverContext.d.ts"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules"],
-  "references": [{ "path": "../auth" }, { "path": "../ui" }]
+  "include": ["src/main.tsx", "src/trpc.ts"],
+  "exclude": ["dist", "node_modules", "src/serverContext.ts", "src/prisma.ts"],
+  "references": [
+    { "path": "../ui" },
+    { "path": "./tsconfig.server.json" }
+  ]
 }

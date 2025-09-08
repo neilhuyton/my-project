@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm prisma generate && tsc --noEmit && tsc -p tsconfig.functions.json && vite build && rm -f packages/site1/*.tsbuildinfo",
+    "build": "pnpm prisma generate && tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f packages/site1/*.tsbuildinfo",
+    "build:server": "pnpm prisma generate && tsc -p tsconfig.server.json --noEmitOnError false",
     "dev": "pnpm prisma generate && vite",
     "preview": "vite preview",
-    "prisma": "prisma generate"
+    "prisma": "prisma generate",
+    "tsc": "tsc"
   },
   "dependencies": {
     "@my-project/ui": "1.0.0",
@@ -26,5 +28,14 @@
     "typescript": "^5.9.2",
     "vite": "^5.4.8",
     "prisma": "^5.22.0"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./prisma/client": "./prisma/client/index.js",
+    "./prisma/client/*": "./prisma/client/*",
+    "./serverContext": {
+      "import": "./dist/serverContext.js",
+      "types": "./dist/serverContext.d.ts"
+    }
   }
 }

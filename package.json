@@ -2,9 +2,10 @@
   "name": "my-project",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "build": "pnpm --sequential -r build",
-    "dev": "pnpm --filter @my-project/site1 dev"
+    "build": "pnpm --filter @my-project/site1 run build:server && pnpm --sequential -r build"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
   }
 }

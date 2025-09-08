@@ -3,32 +3,27 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm prisma generate && tsc",
-    "start": "netlify functions:serve --port 8888 --functions dist/functions",
-    "prisma": "prisma generate"
+    "build": "tsc && tsc -p tsconfig.types.json",
+    "start": "netlify functions:serve --port 8888 --functions dist/functions"
   },
   "dependencies": {
     "@trpc/server": "^11.5.1",
     "zod": "^3.24.0",
     "@netlify/functions": "^2.8.2",
-    "@prisma/client": "^5.22.0",
-    "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3"
+    "@my-project/site1": "1.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.7.5",
-    "@types/bcryptjs": "^2.4.6",
-    "typescript": "^5.9.2",
-    "prisma": "^5.22.0"
+    "typescript": "^5.9.2"
   },
   "main": "./dist/router.js",
   "module": "./dist/router.js",
-  "types": "./dist/router.d.ts",
+  "types": "./dist/types/router.d.ts",
   "exports": {
     ".": {
       "import": "./dist/router.js",
-      "types": "./dist/router.d.ts"
+      "types": "./dist/types/router.d.ts"
     },
-    "./*": "./dist/*"
+    "./*": "./dist/types/*"
   }
 }

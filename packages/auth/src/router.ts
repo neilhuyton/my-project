@@ -1,17 +1,16 @@
 import { router, publicProcedure } from "./trpc";
-import { z } from "zod";
+
+interface UserEmail {
+  email: string;
+}
 
 export const appRouter = router({
-  greeting: publicProcedure
-    .input(z.object({ name: z.string() }))
-    .query(({ input, ctx }) => {
-      return { message: `Hello, ${input.name} from ${ctx.siteId}!` };
-    }),
-  addUser: publicProcedure
-    .input(z.object({ username: z.string() }))
-    .mutation(({ input, ctx }) => {
-      return { success: true, username: input.username, siteId: ctx.siteId };
-    }),
+  getUsers: publicProcedure.query(async ({ ctx }) => {
+    const users: UserEmail[] = await ctx.prisma.user.findMany({
+      select: { email: true },
+    });
+    return users.map((user: UserEmail) => user.email);
+  }),
 });
 
 export type AppRouter = typeof appRouter;

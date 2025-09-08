@@ -10,19 +10,19 @@
     "outDir": "dist",
     "rootDir": "src",
     "composite": true,
+    "declaration": true,
+    "declarationMap": true,
     "allowSyntheticDefaultImports": true,
     "noEmitOnError": false,
     "noEmit": false,
     "tsBuildInfoFile": "dist/.tsbuildinfo",
-    "types": ["node", "@netlify/functions"],
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@my-project/site1/prisma/client": ["../site1/prisma/client/index.d.ts"],
-      "@my-project/site1/prisma/client/*": ["../site1/prisma/client/*"],
-      "@my-project/site1/serverContext": ["../site1/dist/serverContext.d.ts"]
+      "@my-project/site1/prisma/client": ["./prisma/client/index.d.ts"],
+      "@my-project/site1/prisma/client/*": ["./prisma/client/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules"],
-  "references": [{ "path": "../site1/tsconfig.server.json" }]
+  "include": ["src/serverContext.ts", "src/prisma.ts"],
+  "exclude": ["dist", "node_modules"]
 }

@@ -1,7 +1,8 @@
 [build]
-  command = "pnpm --sequential -r build && mkdir -p packages/site1/.netlify/functions-internal && cp packages/server/dist/functions/trpc.js packages/site1/.netlify/functions-internal/trpc.js"
+  command = "pnpm --sequential -r build && mkdir -p packages/site1/.netlify/functions-internal && cp packages/auth/dist/functions/trpc.js packages/site1/.netlify/functions-internal/trpc.js"
   publish = "packages/site1/dist"
   functions = "packages/site1/.netlify/functions-internal"
+  external_node_modules = ["@my-project/site1"]
 
 [dev]
   command = "pnpm --filter @my-project/site1 dev"
@@ -11,3 +12,8 @@
   functions = "packages/site1/.netlify/functions-internal"
   functionsPort = 8888
   autoLaunch = true
+
+[[redirects]]
+  from = "/trpc/*"
+  to = "/.netlify/functions/trpc/:splat"
+  status = 200
