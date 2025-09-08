@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "tsc && tsc -p tsconfig.types.json",
-    "start": "netlify functions:serve --port 8888 --functions dist/functions"
+    "build": "dotenv -e ../../.env -- tsc && tsc -p tsconfig.types.json",
+    "start": "dotenv -e ../../.env -- netlify functions:serve --port 8888 --functions dist/functions"
   },
   "dependencies": {
     "@trpc/server": "^11.5.1",

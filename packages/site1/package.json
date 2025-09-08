@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm prisma generate && tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f packages/site1/*.tsbuildinfo",
-    "build:server": "pnpm prisma generate && tsc -p tsconfig.server.json --noEmitOnError false",
-    "dev": "pnpm prisma generate && vite",
+    "build": "dotenv -e ../../.env -- pnpm prisma generate && tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo",
+    "build:server": "dotenv -e ../../.env -- pnpm prisma generate && tsc -p tsconfig.server.json --noEmitOnError false",
+    "dev": "dotenv -e ../../.env -- pnpm prisma generate && vite",
     "preview": "vite preview",
-    "prisma": "prisma generate",
+    "prisma": "dotenv -e ../../.env -- prisma generate",
     "tsc": "tsc"
   },
   "dependencies": {
