@@ -1,21 +1,23 @@
+// packages/ui/tsconfig.json
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
       "@/components/*": ["src/components/*"],
-      "@/lib/*": ["src/lib/*"]
+      "@/lib/*": ["src/lib/*"],
+      "@my-project/auth": ["../../auth/src"]
     },
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": false
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "__tests__/**/*", "__mocks__/**/*"],
   "exclude": ["dist", "node_modules"],
   "references": []
 }

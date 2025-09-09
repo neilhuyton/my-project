@@ -46,8 +46,6 @@ export const handler = async (event: HandlerEvent) => {
   });
 
   try {
-    console.log("DB URL in function:", dbUrl.replace(/:([^:@]+)@/, ":***@"));
-
     const path = event.path.replace(/^\/\.netlify\/functions\/trpc\/?/, "");
     const queryString = event.queryStringParameters
       ? new URLSearchParams(

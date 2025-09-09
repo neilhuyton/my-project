@@ -2,13 +2,9 @@
   "compilerOptions": {
     "composite": true,
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "allowSyntheticDefaultImports": true,
-    "types": ["vitest/globals", "@testing-library/jest-dom"]
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
   },
-  "include": [
-    "vite.config.ts",
-    "vitest.config.ts",
-    "vitest.setup.ts"
-  ]
+  "include": ["vite.config.ts", "vitest.setup.ts", "__mocks__/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

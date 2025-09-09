@@ -13,11 +13,7 @@ export const trpcClient = trpc.createClient({
       url: import.meta.env.VITE_TRPC_URL || "/trpc",
       headers: { "x-site-id": "site1" },
       fetch: async (url, options) => {
-        console.log("Fetching tRPC:", url, options);
         const response = await fetch(url, options);
-        // Clone the response to preserve the body for tRPC
-        const clonedResponse = response.clone();
-        console.log("Response:", response.status, await clonedResponse.text());
         return response;
       },
     }),

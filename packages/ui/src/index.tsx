@@ -1,3 +1,7 @@
 import React from "react";
 import "./index.css";
-export * from "./components/Button";
+export * from "./components/ui/form";
+export * from "./components/ui/input";
+export * from "./components/ui/button";
+export * from "./components/ui/label";
+export * from "./components/LoginForm";

@@ -1,41 +1,29 @@
+// packages/ui/vitest.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "path";
-import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-    dts({ rollupTypes: true, include: ["src"], outDir: "dist" })
-  ],
-  css: {
-    preprocessorOptions: {
-      css: {
-        charset: false,
-      },
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "./src"),
+      "@/components": resolve(__dirname, "./src/components"),
+      "@/lib": resolve(__dirname, "./src/lib"),
+      "@my-project/auth": resolve(__dirname, "../auth/src"),
     },
   },
-  build: {
-    lib: {
-      entry: resolve(__dirname, "src/index.tsx"),
-      name: "MyProjectUI",
-      fileName: "index",
-      formats: ["es"],
-    },
-    rollupOptions: {
-      external: ["react", "react-dom"],
-      output: {
-        globals: {
-          react: "React",
-          "react-dom": "ReactDOM",
-        },
-        assetFileNames: "index.css",
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./vitest.setup.ts",
+    environmentOptions: {
+      jsdom: {
+        resources: "usable",
       },
     },
-    sourcemap: true,
-    copyPublicDir: false,
-    minify: false, // For debugging
+    env: {
+      VITE_TRPC_URL: "http://localhost:8888/.netlify/functions/trpc", // Add like working project
+    },
   },
 });
