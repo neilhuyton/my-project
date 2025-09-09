@@ -4,3 +4,6 @@
 [dev]
   functions = "dist/functions"
   functionsPort = 8888
+
+[functions]
+  included_files = ["dist/functions/*.js"]

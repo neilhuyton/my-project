@@ -2,3 +2,4 @@ dist/functions/*.d.ts
 dist/functions/*.map
 dist/*.d.ts
 dist/*.map
+dist/functions/trpc.d.ts

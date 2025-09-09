@@ -21,12 +21,25 @@
       "@my-project/site1/prisma/client/*": ["../site1/prisma/client/*"],
       "@my-project/site2/prisma/client": ["../site2/prisma/client/index.d.ts"],
       "@my-project/site2/prisma/client/*": ["../site2/prisma/client/*"]
-    }
+    },
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"],
   "references": [
     { "path": "../site1/tsconfig.server.json" },
     { "path": "../site2/tsconfig.server.json" }
+  ],
+  "files": ["src/functions/trpc.ts"],
+  "compilerOptionsOverrides": [
+    {
+      "files": ["src/functions/*.ts"],
+      "compilerOptions": {
+        "declaration": false,
+        "declarationMap": false
+      }
+    }
   ]
 }

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "dotenv -e ../../.env -- tsc",
+    "build": "dotenv -e ../../.env -- tsc && rm -f dist/functions/*.d.ts dist/functions/*.map",
     "start": "dotenv -e ../../.env -- netlify functions:serve --port 8888 --functions dist/functions"
   },
   "dependencies": {
