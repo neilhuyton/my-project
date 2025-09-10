@@ -13171,16 +13171,14 @@ var handler = /* @__PURE__ */ __name(async (event) => {
       __dirname,
       "./prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node"
     );
-    console.log(
-      "PRISMA_QUERY_ENGINE_LIBRARY:",
-      process.env.PRISMA_QUERY_ENGINE_LIBRARY
-    );
+    console.log("PRISMA_QUERY_ENGINE_LIBRARY:", process.env.PRISMA_QUERY_ENGINE_LIBRARY);
     prisma = new import_client.PrismaClient({
       datasources: { db: { url: dbUrl } },
       log: ["query", "info", "warn", "error"]
     });
+    await prisma.$connect();
   } catch (error) {
-    console.error("Failed to create PrismaClient:", error);
+    console.error("Failed to create or connect PrismaClient:", error);
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -13188,13 +13186,10 @@ var handler = /* @__PURE__ */ __name(async (event) => {
     };
   }
   try {
-    const path = event.path.replace(/^(\/\.netlify\/functions\/trpc|\/trpc)\//, "").replace(/^\/+/, "");
+    const path = event.path.replace(/^\/\.netlify\/functions\/trpc\/?/, "").replace(/^\/trpc\/?/, "");
     console.log("tRPC raw path:", event.path);
     console.log("tRPC parsed path:", path);
-    console.log(
-      "Available procedures:",
-      Object.keys(appRouter._def.procedures)
-    );
+    console.log("Available procedures:", Object.keys(appRouter._def.procedures));
     const queryString = event.queryStringParameters ? new URLSearchParams(
       event.queryStringParameters
     ).toString() : "";
