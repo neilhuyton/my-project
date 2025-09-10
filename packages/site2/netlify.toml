@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm --filter @my-project/site2 prisma && pnpm --filter @my-project/site2 build && mkdir -p .netlify/functions-internal/prisma/client && if [ -f ../auth/node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node ]; then cp ../auth/node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node .netlify/functions-internal/prisma/client/; else echo \"Warning: Prisma query engine binary not found in auth\"; fi && cp ../auth/dist/functions/trpc.js .netlify/functions-internal/trpc.js"
+  command = "pnpm --filter @my-project/auth prisma && pnpm --filter @my-project/site2 prisma && pnpm --filter @my-project/site2 build && mkdir -p .netlify/functions-internal/prisma/client && if [ -f ../auth/node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node ]; then cp ../auth/node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node .netlify/functions-internal/prisma/client/; else cp ../auth/dist/functions/prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node .netlify/functions-internal/prisma/client/ 2>/dev/null || echo \"Warning: Prisma query engine binary not found\"; fi && cp ../auth/dist/functions/trpc.js .netlify/functions-internal/trpc.js"
   publish = "dist"
   functions = ".netlify/functions-internal"
 
@@ -7,7 +7,7 @@
   DATABASE_URL = "postgresql://postgres:olvw-wudfnhu-vwdjlqj-ghy@db.asqrqvtpkudjalnjwmbb.supabase.co:5432/postgres"
   NODE_VERSION = "18"
   PRISMA_LOG_LEVEL = "debug"
-  PRISMA_GENERATE_BINARY_TARGET = "rhel-openssl-3.0.x"
+  PRISMA_CLI_BINARY_TARGETS = "rhel-openssl-3.0.x"
 
 [dev]
   command = "pnpm --filter @my-project/site2 dev"

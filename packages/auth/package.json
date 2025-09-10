@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE1 prisma generate --binary-target rhel-openssl-3.0.x && pnpm --filter @my-project/site1 prisma && pnpm --filter @my-project/site2 prisma && tsc && esbuild src/functions/trpc.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/functions/trpc.js && rm -f dist/functions/*.d.ts dist/functions/*.map && mkdir -p dist/functions/prisma/client && if [ -f node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node ]; then cp node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node dist/functions/prisma/client/; else echo \"Warning: Prisma query engine binary not found, relying on Netlify build\"; fi'",
+    "build": "dotenv -e ../../.env -- sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x DATABASE_URL=$DATABASE_URL_SITE1 prisma generate && pnpm --filter @my-project/site1 prisma && pnpm --filter @my-project/site2 prisma && tsc && esbuild src/functions/trpc.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/functions/trpc.js && rm -f dist/functions/*.d.ts dist/functions/*.map && mkdir -p dist/functions/prisma/client && if [ -f node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node ]; then cp node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node dist/functions/prisma/client/; else echo \"Warning: Prisma query engine binary not found, relying on Netlify build\"; fi'",
     "start": "dotenv -e ../../.env -- netlify functions:serve --port 8888 --functions dist/functions",
     "lint": "eslint . --ext .ts",
-    "prisma": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE1 prisma generate --binary-target rhel-openssl-3.0.x'"
+    "prisma": "dotenv -e ../../.env -- sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x DATABASE_URL=$DATABASE_URL_SITE1 prisma generate'"
   },
   "dependencies": {
     "@netlify/functions": "^2.8.2",
