@@ -3,16 +3,15 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "dotenv -e ../../.env -- sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x PRISMA_LOG_QUERIES=true DATABASE_URL=$DATABASE_URL_SITE1 npx prisma generate --schema=prisma/schema.prisma && ls -l node_modules/.prisma/client/ || { echo \"No binary in auth\"; exit 1; } && tsc && esbuild src/functions/trpc.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/functions/trpc.js --external:@prisma/client && rm -f dist/functions/*.d.ts dist/functions/*.map && mkdir -p dist/functions/prisma/client && cp -r node_modules/.prisma/client/* dist/functions/prisma/client/ && ls -l dist/functions/prisma/client/ || { echo \"No files in dist/functions/prisma/client/\"; exit 1; } && echo \"Copied Prisma client and binary to dist/functions/prisma/client/\"'",
-    "start": "dotenv -e ../../.env -- netlify functions:serve --port 8888 --functions dist/functions",
+    "build": "sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x PRISMA_LOG_QUERIES=true DATABASE_URL=$DATABASE_URL npx prisma generate --schema=prisma/schema.prisma && ls -l node_modules/.prisma/client/ || { echo \"No binary in auth\"; exit 1; } && tsc && esbuild src/functions/trpc.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/functions/trpc.js --external:@prisma/client && rm -f dist/functions/*.d.ts dist/functions/*.map && mkdir -p dist/functions/prisma/client && cp -r node_modules/.prisma/client/* dist/functions/prisma/client/ && ls -l dist/functions/prisma/client/ || { echo \"No files in dist/functions/prisma/client/\"; exit 1; } && echo \"Copied Prisma client and binary to dist/functions/prisma/client/\"'",
+    "start": "netlify functions:serve --port 8888 --functions dist/functions",
     "lint": "eslint . --ext .ts",
-    "prisma": "dotenv -e ../../.env -- sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x PRISMA_LOG_QUERIES=true DATABASE_URL=$DATABASE_URL_SITE1 npx prisma generate --schema=prisma/schema.prisma && ls -l node_modules/.prisma/client/ || echo \"No binary in auth\"'"
+    "prisma": "sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x PRISMA_LOG_QUERIES=true DATABASE_URL=$DATABASE_URL npx prisma generate --schema=prisma/schema.prisma && ls -l node_modules/.prisma/client/ || echo \"No binary in auth\"'"
   },
   "dependencies": {
     "@netlify/functions": "^2.8.2",
     "@trpc/server": "^11.5.1",
     "zod": "^3.24.0",
-    "dotenv": "^17.2.2",
     "@prisma/client": "5.22.0"
   },
   "devDependencies": {
@@ -25,7 +24,6 @@
     "globals": "^15.11.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.8.1",
-    "dotenv-cli": "^7.4.2",
     "prisma": "5.22.0"
   },
   "main": "./dist/router.js",

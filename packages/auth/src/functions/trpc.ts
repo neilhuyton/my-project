@@ -3,11 +3,6 @@ import { appRouter } from "../router";
 import { HandlerEvent } from "@netlify/functions";
 import { PrismaClient } from "../../prisma/client";
 
-if (!process.env.DATABASE_URL) {
-  console.error("DATABASE_URL is not set!!!!");
-  throw new Error("No database configuration for site: site1");
-}
-
 export const handler = async (event: HandlerEvent) => {
   const corsHeaders = {
     "Access-Control-Allow-Origin":
@@ -26,10 +21,11 @@ export const handler = async (event: HandlerEvent) => {
   }
 
   const siteId = event.headers["x-site-id"] || "site1";
-  const dbUrl = process.env.DATABASE_URL;
+  const dbUrlEnv = `DATABASE_URL_${siteId.toUpperCase()}`;
+  const dbUrl = process.env[dbUrlEnv];
 
   if (!dbUrl) {
-    console.error(`No DATABASE_URL for siteId: ${siteId}`);
+    console.error(`No ${dbUrlEnv} for siteId: ${siteId}`);
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
