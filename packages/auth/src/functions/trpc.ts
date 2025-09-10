@@ -6,6 +6,16 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+if (!process.env.DATABASE_URL) {
+  console.error("DATABASE_URL is not set");
+  throw new Error("No database configuration for site: site1");
+}
+
+const prisma = new PrismaClient({
+  datasources: { db: { url: process.env.DATABASE_URL } },
+  log: ["query", "info", "warn", "error"],
+});
+
 export const handler = async (event: HandlerEvent) => {
   const corsHeaders = {
     "Access-Control-Allow-Origin":
