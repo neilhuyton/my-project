@@ -1,13 +1,16 @@
+// packages/auth/src/functions/trpc.ts
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "../router";
 import { HandlerEvent } from "@netlify/functions";
-import type { PrismaClient } from "@my-project/site1/prisma/client";
+import type { PrismaClient } from "@prisma/client"; // Changed
+import dotenv from "dotenv";
 
-// Map siteId to package paths
-const sitePackageMap: Record<string, string> = {
-  site1: "@my-project/site1/prisma/client",
-  site2: "@my-project/site2/prisma/client",
-  // Add more sites here as needed
+dotenv.config();
+
+// Map siteId to database URLs
+const siteDbMap: Record<string, string> = {
+  site1: process.env.DATABASE_URL_SITE1 || "",
+  site2: process.env.DATABASE_URL_SITE2 || "",
 };
 
 export const handler = async (event: HandlerEvent) => {
@@ -27,12 +30,18 @@ export const handler = async (event: HandlerEvent) => {
     };
   }
 
+  console.log("Environment variables:", {
+    DATABASE_URL_SITE1: process.env.DATABASE_URL_SITE1,
+    DATABASE_URL_SITE2: process.env.DATABASE_URL_SITE2,
+  });
   const siteId = event.headers["x-site-id"] || "site1";
-  const dbUrl = process.env[`DATABASE_URL_${siteId.toUpperCase()}`];
-  const packagePath = sitePackageMap[siteId];
+  const dbUrl = siteDbMap[siteId];
 
-  if (!dbUrl || !packagePath) {
-    console.error(`No DATABASE_URL or package found for siteId: ${siteId}`);
+  if (!dbUrl) {
+    console.error(`No DATABASE_URL for siteId: ${siteId}`, {
+      dbUrl,
+      env: process.env.DATABASE_URL_SITE1,
+    });
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -40,7 +49,7 @@ export const handler = async (event: HandlerEvent) => {
     };
   }
 
-  const { PrismaClient } = await import(packagePath);
+  const { PrismaClient } = await import("@prisma/client"); // Changed
   const prisma: PrismaClient = new PrismaClient({
     datasources: { db: { url: dbUrl } },
   });
