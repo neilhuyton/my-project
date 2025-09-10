@@ -13111,14 +13111,12 @@ var loginSchema = external_exports.object({
 });
 var appRouter = router({
   getUsers: publicProcedure.query(async ({ ctx }) => {
-    console.log("getUsers procedure called with siteId:", ctx.siteId);
     const users = await ctx.prisma.user.findMany({
       select: { email: true }
     });
     return users.map((user) => user.email);
   }),
   login: publicProcedure.input(loginSchema).mutation(async ({ input, ctx }) => {
-    console.log("login procedure called with siteId:", ctx.siteId);
     const user = await ctx.prisma.user.findUnique({
       where: { email: input.email }
     });
@@ -13133,7 +13131,6 @@ var appRouter = router({
     };
   })
 });
-console.log("tRPC router procedures:", Object.keys(appRouter._def.procedures));
 
 // src/functions/trpc.ts
 var import_client = __toESM(require_client(), 1);
@@ -13156,7 +13153,6 @@ var handler = /* @__PURE__ */ __name(async (event) => {
   const dbUrlEnv = `DATABASE_URL_${siteId.toUpperCase()}`;
   const dbUrl = process.env[dbUrlEnv];
   if (!dbUrl) {
-    console.error(`No ${dbUrlEnv} for siteId: ${siteId}`);
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -13171,14 +13167,12 @@ var handler = /* @__PURE__ */ __name(async (event) => {
       __dirname,
       "./prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node"
     );
-    console.log("PRISMA_QUERY_ENGINE_LIBRARY:", process.env.PRISMA_QUERY_ENGINE_LIBRARY);
     prisma = new import_client.PrismaClient({
       datasources: { db: { url: dbUrl } },
       log: ["query", "info", "warn", "error"]
     });
-    await prisma.$connect();
   } catch (error) {
-    console.error("Failed to create or connect PrismaClient:", error);
+    console.error("Failed to create PrismaClient:", error);
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -13186,10 +13180,7 @@ var handler = /* @__PURE__ */ __name(async (event) => {
     };
   }
   try {
-    const path = event.path.replace(/^\/\.netlify\/functions\/trpc\/?/, "").replace(/^\/trpc\/?/, "");
-    console.log("tRPC raw path:", event.path);
-    console.log("tRPC parsed path:", path);
-    console.log("Available procedures:", Object.keys(appRouter._def.procedures));
+    const path = event.path.replace(/^(\/\.netlify\/functions\/trpc|\/trpc)\//, "").replace(/^\/+/, "");
     const queryString = event.queryStringParameters ? new URLSearchParams(
       event.queryStringParameters
     ).toString() : "";
@@ -13198,7 +13189,6 @@ var handler = /* @__PURE__ */ __name(async (event) => {
       headers[key] = Array.isArray(value) ? value.join(",") : value ?? "";
     }
     const url = `http://${headers.host || "localhost:8888"}/trpc${path ? `/${path}` : ""}${queryString ? `?${queryString}` : ""}`;
-    console.log("tRPC constructed URL:", url);
     const response = await fetchRequestHandler({
       endpoint: "/trpc",
       req: new Request(url, {
