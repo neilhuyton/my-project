@@ -8,6 +8,8 @@ import "@my-project/ui/index.css";
 const App = () => {
   const { data: users, error, isLoading } = trpc.getUsers.useQuery();
 
+  console.log("users", users);
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Site1</h1>
