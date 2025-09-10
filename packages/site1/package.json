@@ -7,12 +7,12 @@
     "dev": "vite",
     "start": "vite --host",
     "lint": "eslint . --ext .ts,.tsx",
-    "prisma": "dotenv -e ../../.env -- sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x DATABASE_URL=$DATABASE_URL_SITE1 npx prisma generate && ls -l node_modules/.prisma/client/ || echo \"No binary in site1\"'"
+    "prisma": "dotenv -e ../../.env -- sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x DATABASE_URL=$DATABASE_URL_SITE1 npx prisma generate --schema=prisma/schema.prisma && ls -l node_modules/.prisma/client/ || echo \"No binary in site1\"'"
   },
   "dependencies": {
     "@my-project/auth": "workspace:*",
     "@my-project/ui": "workspace:*",
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "5.22.0",
     "@tanstack/react-query": "^5.59.15",
     "@trpc/client": "^11.5.1",
     "@trpc/react-query": "^11.5.1",
@@ -35,7 +35,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.12",
     "globals": "^15.11.0",
-    "prisma": "^5.22.0",
+    "prisma": "5.22.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.8.1",
     "vite": "^5.4.8"
