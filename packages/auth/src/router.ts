@@ -18,7 +18,6 @@ export const appRouter = router({
     return users.map((user: UserEmail) => user.email);
   }),
   login: publicProcedure.input(loginSchema).mutation(async ({ input, ctx }) => {
-    // Implementation will be mocked by MSW
     const user = await ctx.prisma.user.findUnique({
       where: { email: input.email },
     });

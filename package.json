@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "pnpm --filter @my-project/site1 run build:server && pnpm --sequential -r build",
+    "build_legacy": "pnpm --filter @my-project/site1 run build:server && pnpm --sequential -r build",
+    "build": "pnpm --sequential -r build",
     "dev:site1": "pnpm --filter @my-project/site1 dev",
     "dev:site2": "pnpm --filter @my-project/site2 dev",
     "auth:start": "dotenv -e .env -- pnpm --filter @my-project/auth start",

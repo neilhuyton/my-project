@@ -2,7 +2,7 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "../router";
 import { HandlerEvent } from "@netlify/functions";
-import type { PrismaClient } from "@prisma/client"; // Changed
+import { PrismaClient } from "../../prisma/client"; // Correct path
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -49,10 +49,19 @@ export const handler = async (event: HandlerEvent) => {
     };
   }
 
-  const { PrismaClient } = await import("@prisma/client"); // Changed
-  const prisma: PrismaClient = new PrismaClient({
-    datasources: { db: { url: dbUrl } },
-  });
+  let prisma: PrismaClient;
+  try {
+    prisma = new PrismaClient({
+      datasources: { db: { url: dbUrl } },
+    });
+  } catch (error) {
+    console.error("Failed to create PrismaClient:", error);
+    return {
+      statusCode: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Failed to initialize database client" }),
+    };
+  }
 
   try {
     const path = event.path.replace(/^\/\.netlify\/functions\/trpc\/?/, "");
