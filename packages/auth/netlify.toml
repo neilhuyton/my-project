@@ -9,5 +9,5 @@
   node_bundler = "esbuild"
   included_files = [
     "dist/functions/trpc.js",
-    "dist/functions/prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node"
+    "dist/functions/prisma/client/**"
   ]
