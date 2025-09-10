@@ -8,8 +8,8 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      insertTypesEntry: true, // Generate a types entry in package.json
-      outDir: "dist", // Changed from outputDir to outDir
+      insertTypesEntry: true,
+      outDir: "dist",
       include: ["src/**/*"],
     }),
   ],
@@ -23,10 +23,10 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: resolve(__dirname, "src/index.tsx"), // Entry point for the library
-      name: "MyProjectUI", // Global name (for UMD builds, if needed)
-      fileName: (format) => `index.${format}.js`, // Output file name
-      formats: ["es", "cjs"], // Build for ES modules and CommonJS
+      entry: resolve(__dirname, "src/index.tsx"),
+      name: "MyProjectUI",
+      fileName: () => `index.js`,
+      formats: ["es"],
     },
     rollupOptions: {
       external: [
@@ -46,7 +46,7 @@ export default defineConfig({
         "tailwind-merge",
         "tw-animate-css",
         "zod",
-      ], // Externalize dependencies
+      ],
       output: {
         globals: {
           react: "React",
@@ -54,9 +54,9 @@ export default defineConfig({
         },
       },
     },
-    sourcemap: true, // Generate source maps
+    sourcemap: true,
     outDir: "dist",
-    emptyOutDir: true, // Clean the dist folder before building
+    emptyOutDir: true,
   },
   test: {
     globals: true,

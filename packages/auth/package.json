@@ -4,27 +4,36 @@
   "type": "module",
   "scripts": {
     "build": "dotenv -e ../../.env -- tsc && rm -f dist/functions/*.d.ts dist/functions/*.map",
-    "start": "dotenv -e ../../.env -- netlify functions:serve --port 8888 --functions dist/functions"
+    "start": "dotenv -e ../../.env -- netlify functions:serve --port 8888 --functions dist/functions",
+    "lint": "eslint . --ext .ts"
   },
   "dependencies": {
     "@trpc/server": "^11.5.1",
     "zod": "^3.24.0",
-    "@netlify/functions": "^2.8.2",
-    "@my-project/site1": "1.0.0",
-    "@my-project/site2": "1.0.0"
+    "@netlify/functions": "^2.8.2"
   },
   "devDependencies": {
     "@types/node": "^22.7.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "eslint": "^9.13.0",
+    "@typescript-eslint/parser": "^8.8.1",
+    "@typescript-eslint/eslint-plugin": "^8.8.1",
+    "@eslint/js": "^9.13.0",
+    "globals": "^15.11.0",
+    "typescript-eslint": "^8.8.1",
+    "@my-project/site1": "workspace:*",
+    "@my-project/site2": "workspace:*"
   },
   "main": "./dist/router.js",
-  "module": "./dist/router.js",
   "types": "./dist/types/router.d.ts",
   "exports": {
     ".": {
       "import": "./dist/router.js",
       "types": "./dist/types/router.d.ts"
     },
-    "./*": "./dist/types/*"
+    "./*": {
+      "import": "./dist/types/*",
+      "types": "./dist/types/*"
+    }
   }
 }

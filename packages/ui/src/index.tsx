@@ -1,4 +1,3 @@
-import React from "react";
 import "./index.css";
 export * from "./components/ui/form";
 export * from "./components/ui/input";

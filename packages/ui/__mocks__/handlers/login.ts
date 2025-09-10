@@ -19,7 +19,7 @@ export const loginHandler = http.post(
     try {
       const text = await request.text();
       body = text ? JSON.parse(text) : {};
-    } catch (error) {
+    } catch {
       return createTRPCErrorResponse(
         0,
         "Failed to parse JSON body",

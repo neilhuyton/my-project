@@ -9,7 +9,7 @@ import {
   beforeEach,
   vi,
 } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
@@ -50,7 +50,7 @@ describe("LoginForm Component", () => {
             const result = await trpcClient.login.mutate(data);
             return result;
           }}
-          onSuccess={(data) => history.push("/weight")}
+          onSuccess={() => history.push("/weight")}
           onNavigateToResetPassword={() => history.push("/reset-password")}
           onNavigateToRegister={() => history.push("/register")}
         />
@@ -111,7 +111,7 @@ describe("LoginForm Component", () => {
   it("handles successful login and redirects to /weight", async () => {
     server.use(loginHandler);
     const { history, testRouter } = setupRouter();
-    const mockOnSuccess = vi.fn((data) => {
+    const mockOnSuccess = vi.fn(() => {
       history.push("/weight");
     });
     const mockOnError = vi.fn();
