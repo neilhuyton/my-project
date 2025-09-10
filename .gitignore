@@ -1,6 +1,9 @@
+# .gitignore
 dist/
 node_modules/
 .pnpm-store/
 .pnpm-debug.log
 packages/*/dist/
 .netlify/
+# Allow auth's trpc.js for Netlify
+!packages/auth/dist/functions/trpc.js
