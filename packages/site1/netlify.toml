@@ -8,6 +8,7 @@
   PRISMA_LOG_LEVEL = "debug"
   PRISMA_CLI_BINARY_TARGETS = "rhel-openssl-3.0.x,rhel-openssl-1.0.x"
   PRISMA_LOG_QUERIES = "true"
+  PRISMA_QUERY_ENGINE_LIBRARY = ".netlify/functions-internal/prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node"
 
 [dev]
   command = "pnpm --filter @my-project/site1 dev"
