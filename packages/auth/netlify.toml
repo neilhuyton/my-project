@@ -11,3 +11,8 @@
     "dist/functions/trpc.js",
     "dist/functions/prisma/client/**"
   ]
+  
+[[redirects]]
+  from = "/trpc/*"
+  to = "/.netlify/functions/trpc/:splat"
+  status = 200

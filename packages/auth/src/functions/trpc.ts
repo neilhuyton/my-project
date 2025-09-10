@@ -60,11 +60,10 @@ export const handler = async (event: HandlerEvent) => {
   }
 
   try {
-    // Fix path parsing to strip /trpc/ correctly
-    const path = event.path.replace(
-      /^\/\.netlify\/functions\/trpc\/|\/trpc\//,
-      ""
-    );
+    // Parse path to handle both local and production
+    const path = event.path
+      .replace(/^(\/\.netlify\/functions\/trpc|\/trpc)\//, "")
+      .replace(/^\/+/, "");
     console.log("tRPC raw path:", event.path);
     console.log("tRPC parsed path:", path);
     console.log(
@@ -80,7 +79,6 @@ export const handler = async (event: HandlerEvent) => {
     for (const [key, value] of Object.entries(event.headers || {})) {
       headers[key] = Array.isArray(value) ? value.join(",") : value ?? "";
     }
-    // Construct URL without duplicating /trpc/
     const url = `http://${headers.host || "localhost:8888"}/trpc${
       path ? `/${path}` : ""
     }${queryString ? `?${queryString}` : ""}`;

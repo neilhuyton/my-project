@@ -10,9 +10,10 @@ export const queryClient = new QueryClient();
 export const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url:
-        import.meta.env.VITE_TRPC_URL ||
-        "http://localhost:8888/.netlify/functions/trpc",
+      // url: import.meta.env.VITE_TRPC_URL || "http://localhost:8888/.netlify/functions/trpc",
+      // url: import.meta.env.VITE_TRPC_URL || "http://localhost:8888/trpc",
+      // url: import.meta.env.VITE_TRPC_URL || "http://localhost:8888/trpc",
+      url: import.meta.env.VITE_TRPC_URL || "http://localhost:8888/trpc",
       headers: { "x-site-id": "site1" },
       fetch: async (url, options) => {
         console.log("tRPC fetch:", url, options);
