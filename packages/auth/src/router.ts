@@ -12,14 +12,12 @@ const loginSchema = z.object({
 
 export const appRouter = router({
   getUsers: publicProcedure.query(async ({ ctx }) => {
-    console.log("getUsers procedure called with siteId:", ctx.siteId);
     const users: UserEmail[] = await ctx.prisma.user.findMany({
       select: { email: true },
     });
     return users.map((user: UserEmail) => user.email);
   }),
   login: publicProcedure.input(loginSchema).mutation(async ({ input, ctx }) => {
-    console.log("login procedure called with siteId:", ctx.siteId);
     const user = await ctx.prisma.user.findUnique({
       where: { email: input.email },
     });
@@ -37,5 +35,3 @@ export const appRouter = router({
 
 export type AppRouter = typeof appRouter;
 
-// Debug: Log available procedures
-console.log("tRPC router procedures:", Object.keys(appRouter._def.procedures));
