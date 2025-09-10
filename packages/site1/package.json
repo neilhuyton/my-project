@@ -7,7 +7,7 @@
     "dev": "vite",
     "start": "vite --host",
     "lint": "eslint . --ext .ts,.tsx",
-    "prisma": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE1 prisma generate --binary-target rhel-openssl-3.0.x'"
+    "prisma": "dotenv -e ../../.env -- sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x DATABASE_URL=$DATABASE_URL_SITE1 prisma generate'"
   },
   "dependencies": {
     "@my-project/auth": "workspace:*",
