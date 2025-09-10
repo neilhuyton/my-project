@@ -2,7 +2,7 @@
   "compilerOptions": {
     "composite": true,
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler", // Changed from "node"
     "allowSyntheticDefaultImports": true
   },
   "include": ["vite.config.ts", "vitest.setup.ts", "__mocks__/**/*"],

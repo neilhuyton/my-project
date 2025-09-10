@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo'",
+    "build": "pnpm --filter @my-project/ui build && pnpm --filter @my-project/auth build && dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo'",
     "build:server": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 tsc -p tsconfig.server.json --noEmitOnError false'",
     "dev": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 vite'",
     "preview": "vite preview",
     "prisma": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma generate'",
-    "prisma:migrate": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma migrate dev'"
+    "prisma:migrate": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma migrate dev'",
+    "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
     "@my-project/ui": "1.0.0",
@@ -27,7 +28,15 @@
     "@vitejs/plugin-react": "^4.3.2",
     "typescript": "^5.9.2",
     "vite": "^5.4.8",
-    "prisma": "^5.22.0"
+    "prisma": "^5.22.0",
+    "eslint": "^9.35.0",
+    "@typescript-eslint/parser": "^8.43.0",
+    "@typescript-eslint/eslint-plugin": "^8.43.0",
+    "@eslint/js": "^9.35.0",
+    "globals": "^15.15.0",
+    "typescript-eslint": "^8.43.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2"
   },
   "exports": {
     ".": "./dist/index.js",
