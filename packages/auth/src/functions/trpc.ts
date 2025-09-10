@@ -2,19 +2,11 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "../router";
 import { HandlerEvent } from "@netlify/functions";
 import { PrismaClient } from "../../prisma/client";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 if (!process.env.DATABASE_URL) {
-  console.error("DATABASE_URL is not set");
+  console.error("DATABASE_URL is not set!!!!");
   throw new Error("No database configuration for site: site1");
 }
-
-const prisma = new PrismaClient({
-  datasources: { db: { url: process.env.DATABASE_URL } },
-  log: ["query", "info", "warn", "error"],
-});
 
 export const handler = async (event: HandlerEvent) => {
   const corsHeaders = {
@@ -51,6 +43,7 @@ export const handler = async (event: HandlerEvent) => {
   try {
     prisma = new PrismaClient({
       datasources: { db: { url: dbUrl } },
+      log: ["query", "info", "warn", "error"],
     });
   } catch (error) {
     console.error("Failed to create PrismaClient:", error);
