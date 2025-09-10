@@ -2,7 +2,7 @@
   command = "pnpm --filter @my-project/site1 build"
   publish = "dist"
   functions = ".netlify/functions-internal"
-  external_node_modules = ["@my-project/site1", "@trpc/server"]
+  external_node_modules = ["@my-project/site1"]
 
 [dev]
   command = "pnpm --filter @my-project/site1 dev"
