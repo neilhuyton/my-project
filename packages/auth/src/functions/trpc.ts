@@ -38,10 +38,10 @@ export const handler = async (event: HandlerEvent) => {
 
   let prisma: PrismaClient;
   try {
-    // Set PRISMA_QUERY_ENGINE_LIBRARY to ensure correct binary is used
+    // Set PRISMA_QUERY_ENGINE_LIBRARY for runtime
     process.env.PRISMA_QUERY_ENGINE_LIBRARY = resolve(
       __dirname,
-      "prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node"
+      "./prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node"
     );
     prisma = new PrismaClient({
       datasources: { db: { url: dbUrl } },
