@@ -7,7 +7,7 @@
     "dev": "vite",
     "start": "vite --host",
     "lint": "eslint . --ext .ts,.tsx",
-    "prisma": "dotenv -e ../../.env -- sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x DATABASE_URL=$DATABASE_URL_SITE1 prisma generate && ls -l node_modules/.prisma/client/ || echo \"No binary in site1\"'"
+    "prisma": "dotenv -e ../../.env -- sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x DATABASE_URL=$DATABASE_URL_SITE1 npx prisma generate && ls -l node_modules/.prisma/client/ || echo \"No binary in site1\"'"
   },
   "dependencies": {
     "@my-project/auth": "workspace:*",
