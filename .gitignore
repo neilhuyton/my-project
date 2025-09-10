@@ -4,3 +4,4 @@ node_modules/
 .pnpm-debug.log
 packages/*/dist/
 .netlify/
+!packages/auth/dist/functions/trpc.js

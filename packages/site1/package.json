@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter @my-project/ui build && pnpm --filter @my-project/auth build && dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE1 tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo'",
+    "build": "pnpm --filter @my-project/ui build && pnpm --filter @my-project/auth build && dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE1 tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo && mkdir -p .netlify/functions-internal && cp ../auth/dist/functions/trpc.js .netlify/functions-internal/trpc.js'",
     "build:server": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE1 tsc -p tsconfig.server.json --noEmitOnError false'",
     "dev": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE1 vite'",
     "preview": "vite preview",
