@@ -1,17 +1,10 @@
-// packages/auth/src/functions/trpc.ts
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "../router";
 import { HandlerEvent } from "@netlify/functions";
-import { PrismaClient } from "../../prisma/client"; // Correct path
+import { PrismaClient } from "../../prisma/client";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-// Map siteId to database URLs
-const siteDbMap: Record<string, string> = {
-  site1: process.env.DATABASE_URL_SITE1 || "",
-  site2: process.env.DATABASE_URL_SITE2 || "",
-};
 
 export const handler = async (event: HandlerEvent) => {
   const corsHeaders = {
@@ -30,22 +23,17 @@ export const handler = async (event: HandlerEvent) => {
     };
   }
 
-  console.log("Environment variables:", {
-    DATABASE_URL_SITE1: process.env.DATABASE_URL_SITE1,
-    DATABASE_URL_SITE2: process.env.DATABASE_URL_SITE2,
-  });
   const siteId = event.headers["x-site-id"] || "site1";
-  const dbUrl = siteDbMap[siteId];
+  const dbUrl = process.env.DATABASE_URL;
 
   if (!dbUrl) {
-    console.error(`No DATABASE_URL for siteId: ${siteId}`, {
-      dbUrl,
-      env: process.env.DATABASE_URL_SITE1,
-    });
+    console.error(`No DATABASE_URL for siteId: ${siteId}`);
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      body: JSON.stringify({ error: `No configuration for site: ${siteId}` }),
+      body: JSON.stringify({
+        error: `No database configuration for site: ${siteId}`,
+      }),
     };
   }
 

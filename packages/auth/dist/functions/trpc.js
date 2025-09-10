@@ -12659,10 +12659,6 @@ var appRouter = router({
 var import_client = __toESM(require_client(), 1);
 var import_dotenv = __toESM(require_main(), 1);
 import_dotenv.default.config();
-var siteDbMap = {
-  site1: process.env.DATABASE_URL_SITE1 || "",
-  site2: process.env.DATABASE_URL_SITE2 || ""
-};
 var handler = async (event) => {
   const corsHeaders = {
     "Access-Control-Allow-Origin": event.headers.origin || "http://localhost:5173",
@@ -12677,21 +12673,16 @@ var handler = async (event) => {
       body: ""
     };
   }
-  console.log("Environment variables:", {
-    DATABASE_URL_SITE1: process.env.DATABASE_URL_SITE1,
-    DATABASE_URL_SITE2: process.env.DATABASE_URL_SITE2
-  });
   const siteId = event.headers["x-site-id"] || "site1";
-  const dbUrl = siteDbMap[siteId];
+  const dbUrl = process.env.DATABASE_URL;
   if (!dbUrl) {
-    console.error(`No DATABASE_URL for siteId: ${siteId}`, {
-      dbUrl,
-      env: process.env.DATABASE_URL_SITE1
-    });
+    console.error(`No DATABASE_URL for siteId: ${siteId}`);
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      body: JSON.stringify({ error: `No configuration for site: ${siteId}` })
+      body: JSON.stringify({
+        error: `No database configuration for site: ${siteId}`
+      })
     };
   }
   let prisma;

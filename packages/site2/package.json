@@ -7,7 +7,7 @@
     "build:server": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 tsc -p tsconfig.server.json --noEmitOnError false'",
     "dev": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 vite'",
     "preview": "vite preview",
-    "prisma": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma generate'",
+    "prisma": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma generate --binary-target rhel-openssl-3.0.x'",
     "prisma:migrate": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 prisma migrate dev'",
     "lint": "eslint . --ext .ts,.tsx"
   },
