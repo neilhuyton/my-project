@@ -1,5 +1,2 @@
 packages:
-  - 'packages/site1'
-  - 'packages/site2'
-  - 'packages/auth'
-  - 'packages/ui'
+  - "packages/*"

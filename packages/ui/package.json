@@ -12,7 +12,7 @@
     "./index.css": "./dist/index.css"
   },
   "scripts": {
-    "build": "tsc --emitDeclarationOnly && vite build && rm -f tsconfig.tsbuildinfo",
+    "build": "tsc --emitDeclarationOnly && vite build",
     "dev": "vite",
     "preview": "vite preview",
     "test": "vitest",
