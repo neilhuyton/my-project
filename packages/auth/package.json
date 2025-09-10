@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "dotenv -e ../../.env -- tsc && esbuild src/functions/trpc.ts --bundle --platform=node --target=node18 --outfile=dist/functions/trpc.js --external:@my-project/site1/prisma/client --external:@my-project/site2/prisma/client && rm -f dist/functions/*.d.ts dist/functions/*.map",
+    "build": "dotenv -e ../../.env -- tsc && esbuild src/functions/trpc.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/functions/trpc.js --external:@my-project/site1/prisma/client --external:@my-project/site2/prisma/client && rm -f dist/functions/*.d.ts dist/functions/*.map",
     "start": "dotenv -e ../../.env -- netlify functions:serve --port 8888 --functions dist/functions",
     "lint": "eslint . --ext .ts"
   },
