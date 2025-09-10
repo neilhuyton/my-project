@@ -13189,8 +13189,8 @@ var handler = /* @__PURE__ */ __name(async (event) => {
   }
   try {
     const path = event.path.replace(
-      /^\/\.netlify\/functions\/trpc\/?(.*)/,
-      "$1"
+      /^\/\.netlify\/functions\/trpc\/|\/trpc\//,
+      ""
     );
     console.log("tRPC raw path:", event.path);
     console.log("tRPC parsed path:", path);
