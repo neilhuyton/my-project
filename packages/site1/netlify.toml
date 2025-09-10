@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm --filter @my-project/auth prisma && pnpm --filter @my-project/site1 prisma && pnpm --filter @my-project/site1 build && mkdir -p .netlify/functions-internal/prisma/client && if [ -f ../auth/node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node ]; then cp ../auth/node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node .netlify/functions-internal/prisma/client/; else cp ../auth/dist/functions/prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node .netlify/functions-internal/prisma/client/ 2>/dev/null || echo \"Warning: Prisma query engine binary not found\"; fi && cp ../auth/dist/functions/trpc.js .netlify/functions-internal/trpc.js"
+  command = "pnpm --filter @my-project/auth prisma && pnpm --filter @my-project/site1 prisma && ls -l ../auth/node_modules/.prisma/client/ || echo 'No binary in auth' && ls -l node_modules/.prisma/client/ || echo 'No binary in site1' && pnpm --filter @my-project/site1 build && mkdir -p .netlify/functions-internal/prisma/client && if [ -f ../auth/node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node ]; then cp ../auth/node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node .netlify/functions-internal/prisma/client/ && cp ../auth/node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node .netlify/functions-internal/ && echo 'Copied binary from auth'; elif [ -f node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node ]; then cp node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node .netlify/functions-internal/prisma/client/ && cp node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node .netlify/functions-internal/ && echo 'Copied binary from site1'; else echo 'Warning: Prisma query engine binary not found'; fi && cp ../auth/dist/functions/trpc.js .netlify/functions-internal/trpc.js"
   publish = "dist"
   functions = ".netlify/functions-internal"
 
@@ -27,5 +27,6 @@
   node_bundler = "esbuild"
   included_files = [
     ".netlify/functions-internal/trpc.js",
-    ".netlify/functions-internal/prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node"
+    ".netlify/functions-internal/prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node",
+    ".netlify/functions-internal/libquery_engine-rhel-openssl-3.0.x.so.node"
   ]
