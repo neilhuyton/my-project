@@ -4,7 +4,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "node_modules", ".netlify/**"] }, // Add .netlify/**
+  { ignores: ["dist", "node_modules", ".netlify/**", "prisma/**"] }, // Added prisma/**
   {
     files: ["**/*.ts"],
     languageOptions: {
