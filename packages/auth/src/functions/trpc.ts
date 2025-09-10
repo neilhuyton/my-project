@@ -38,11 +38,11 @@ export const handler = async (event: HandlerEvent) => {
 
   let prisma: PrismaClient;
   try {
-    // Set PRISMA_QUERY_ENGINE_LIBRARY for runtime
     process.env.PRISMA_QUERY_ENGINE_LIBRARY = resolve(
       __dirname,
       "./prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node"
     );
+    console.log("PRISMA_QUERY_ENGINE_LIBRARY:", process.env.PRISMA_QUERY_ENGINE_LIBRARY);
     prisma = new PrismaClient({
       datasources: { db: { url: dbUrl } },
       log: ["query", "info", "warn", "error"],
@@ -58,6 +58,8 @@ export const handler = async (event: HandlerEvent) => {
 
   try {
     const path = event.path.replace(/^\/\.netlify\/functions\/trpc\/?/, "");
+    console.log("tRPC request path:", path);
+    console.log("Available procedures:", Object.keys(appRouter._def.procedures));
     const queryString = event.queryStringParameters
       ? new URLSearchParams(
           event.queryStringParameters as Record<string, string>
