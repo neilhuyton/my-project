@@ -42,7 +42,10 @@ export const handler = async (event: HandlerEvent) => {
       __dirname,
       "./prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node"
     );
-    console.log("PRISMA_QUERY_ENGINE_LIBRARY:", process.env.PRISMA_QUERY_ENGINE_LIBRARY);
+    console.log(
+      "PRISMA_QUERY_ENGINE_LIBRARY:",
+      process.env.PRISMA_QUERY_ENGINE_LIBRARY
+    );
     prisma = new PrismaClient({
       datasources: { db: { url: dbUrl } },
       log: ["query", "info", "warn", "error"],
@@ -57,9 +60,16 @@ export const handler = async (event: HandlerEvent) => {
   }
 
   try {
-    const path = event.path.replace(/^\/\.netlify\/functions\/trpc\/?/, "");
-    console.log("tRPC request path:", path);
-    console.log("Available procedures:", Object.keys(appRouter._def.procedures));
+    const path = event.path.replace(
+      /^\/\.netlify\/functions\/trpc\/?(.*)/,
+      "$1"
+    );
+    console.log("tRPC raw path:", event.path);
+    console.log("tRPC parsed path:", path);
+    console.log(
+      "Available procedures:",
+      Object.keys(appRouter._def.procedures)
+    );
     const queryString = event.queryStringParameters
       ? new URLSearchParams(
           event.queryStringParameters as Record<string, string>
@@ -72,6 +82,7 @@ export const handler = async (event: HandlerEvent) => {
     const url = `http://${headers.host || "localhost:8888"}/trpc${
       path ? `/${path}` : ""
     }${queryString ? `?${queryString}` : ""}`;
+    console.log("tRPC constructed URL:", url);
 
     const response = await fetchRequestHandler({
       endpoint: "/trpc",
@@ -85,6 +96,9 @@ export const handler = async (event: HandlerEvent) => {
         siteId,
         prisma,
       }),
+      onError: ({ error, path }) => {
+        console.error(`tRPC handler error for path ${path}:`, error);
+      },
     });
 
     const responseBody = await response.text();
