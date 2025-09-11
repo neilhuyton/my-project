@@ -11,4 +11,4 @@ packages/*/dist/
 
 **/.netlify/blobs-serve/
 **/.netlify/functions-serve/
-**/dist/src/  # If types are in root dist/
+**/dist/src/
