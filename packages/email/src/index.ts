@@ -1,3 +1,4 @@
+// packages/email/src/index.ts
 import nodemailer from "nodemailer";
 
 interface EmailConfig {
@@ -47,7 +48,6 @@ export async function sendVerificationEmail(
     return { success: false, error: (error as Error).message };
   }
 }
-
 export async function sendResetPasswordEmail(
   to: string,
   resetToken: string,

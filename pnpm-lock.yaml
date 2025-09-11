@@ -44,6 +44,9 @@ importers:
 
   packages/auth:
     dependencies:
+      '@my-project/email':
+        specifier: 1.0.0
+        version: link:../email
       '@netlify/functions':
         specifier: ^2.8.2
         version: 2.8.2
