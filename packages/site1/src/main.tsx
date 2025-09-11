@@ -1,5 +1,4 @@
-// packages/site1/src/main.tsx
-import React, { useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import { Button } from "@my-project/ui";
 import { trpc, queryClient, trpcClient } from "./trpc";
@@ -8,16 +7,6 @@ import "@my-project/ui/index.css";
 
 const App = () => {
   const { data: users, error, isLoading } = trpc.getUsers.useQuery();
-
-  useEffect(() => {
-    if (error) {
-      console.error("tRPC getUsers error:", error);
-    }
-    if (users) {
-      console.log("tRPC getUsers success:", users);
-    }
-    console.log("tRPC users:", users, "error:", error, "isLoading:", isLoading);
-  }, [users, error, isLoading]);
 
   return (
     <div className="p-4">

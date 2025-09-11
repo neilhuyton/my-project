@@ -11,11 +11,7 @@ export const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
       url: import.meta.env.VITE_TRPC_URL || "/trpc",
-      headers: { "x-site-id": "site2" }, // Set to site2
-      fetch: async (url, options) => {
-        const response = await fetch(url, options);
-        return response;
-      },
+      headers: { "x-site-id": "site2" },
     }),
   ],
 });

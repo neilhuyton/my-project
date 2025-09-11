@@ -5,3 +5,10 @@ node_modules/
 packages/*/dist/
 .netlify/
 !packages/auth/dist/functions/trpc.js
+
+**/vite.config.d.ts
+**/vite.config.d.ts.map
+
+**/.netlify/blobs-serve/
+**/.netlify/functions-serve/
+**/dist/src/  # If types are in root dist/
