@@ -1,26 +1,33 @@
+// packages/site1/src/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Button } from "@my-project/ui";
+import { Button, LoginForm } from "@my-project/ui";
 import { trpc, queryClient, trpcClient } from "./trpc";
 import { QueryClientProvider } from "@tanstack/react-query";
 import "@my-project/ui/index.css";
 
 const App = () => {
-  const { data: users, error, isLoading } = trpc.getUsers.useQuery();
+  const loginMutation = trpc.login.useMutation({
+    onSuccess: (data) => {
+      alert(`Login successful! Token: ${data.token}`);
+    },
+    onError: (error: any) => {
+      alert(`Login failed: ${error.message}`);
+    },
+  });
+
+  const handleLogin = async (data: { email: string; password: string }) => {
+    return loginMutation.mutateAsync(data); // Use mutateAsync to return a Promise
+  };
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Site1</h1>
-      {isLoading && <p>Loading users...</p>}
-      {error && <p>Error: {error.message}</p>}
-      {users && (
-        <ul>
-          {users.map((email: string) => (
-            <li key={email}>{email}</li>
-          ))}
-        </ul>
-      )}
-      <Button onClick={() => alert("Clicked!")}>Click Me</Button>
+      <LoginForm
+        loginMutation={handleLogin}
+        onSuccess={() => {}}
+        onError={() => {}}
+      />
     </div>
   );
 };

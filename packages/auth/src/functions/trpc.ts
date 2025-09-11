@@ -2,7 +2,6 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "../router";
 import { HandlerEvent } from "@netlify/functions";
 import { PrismaClient } from "../../prisma/client";
-import { resolve } from "path";
 
 export const handler = async (event: HandlerEvent) => {
   const corsHeaders = {
@@ -37,10 +36,6 @@ export const handler = async (event: HandlerEvent) => {
 
   let prisma: PrismaClient;
   try {
-    process.env.PRISMA_QUERY_ENGINE_LIBRARY = resolve(
-      __dirname,
-      "./prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node"
-    );
     prisma = new PrismaClient({
       datasources: { db: { url: dbUrl } },
       log: ["query", "info", "warn", "error"],
@@ -55,7 +50,6 @@ export const handler = async (event: HandlerEvent) => {
   }
 
   try {
-    // Parse path to handle both local and production
     const path = event.path
       .replace(/^(\/\.netlify\/functions\/trpc|\/trpc)\//, "")
       .replace(/^\/+/, "");

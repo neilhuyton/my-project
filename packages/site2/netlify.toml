@@ -4,10 +4,8 @@
   functions = ".netlify/functions-internal"
 
 [build.environment]
-  DATABASE_URL = "postgresql://postgres:olvw-wudfnhu-vwdjlqj-ghy@db.asqrqvtpkudjalnjwmbb.supabase.co:5432/postgres"
   NODE_VERSION = "18"
-  PRISMA_LOG_LEVEL = "debug"
-  PRISMA_CLI_BINARY_TARGETS = "rhel-openssl-3.0.x"
+  VITE_TRPC_URL = "/trpc"
 
 [dev]
   command = "pnpm --filter @my-project/site2 dev"

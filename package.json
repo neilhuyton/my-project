@@ -5,14 +5,15 @@
   "scripts": {
     "clean": "pnpm -r exec rm -rf dist .netlify && rm -rf packages/*/packages",
     "build": "pnpm clean && pnpm --sequential -r build",
-    "dev:site1": "pnpm --filter @my-project/site1 dev",
-    "dev:site2": "pnpm --filter @my-project/site2 dev",
+    "dev:site1": "pnpm --filter @my-project/ui build && pnpm --filter @my-project/site1 dev",
+    "dev:site2": "pnpm --filter @my-project/ui build && pnpm --filter @my-project/site2 dev",
     "auth:start": "pnpm --filter @my-project/auth start",
     "prisma:site1": "pnpm --filter @my-project/site1 prisma",
     "prisma:site2": "pnpm --filter @my-project/site2 prisma",
     "prisma:migrate:site1": "pnpm --filter @my-project/site1 prisma:migrate",
     "prisma:migrate:site2": "pnpm --filter @my-project/site2 prisma:migrate",
-    "lint": "pnpm --sequential -r lint"
+    "type-check": "pnpm -r exec tsc --noEmit",
+    "lint": "pnpm type-check && pnpm --sequential -r lint"
   },
   "devDependencies": {
     "eslint": "^9.13.0",
@@ -20,5 +21,13 @@
     "typescript": "^5.9.2",
     "globals": "^15.11.0",
     "typescript-eslint": "^8.8.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@tanstack/react-query": "^5.59.15",
+      "@trpc/client": "^11.5.1",
+      "@trpc/react-query": "^11.5.1",
+      "zod": "^3.25.76"
+    }
   }
 }
