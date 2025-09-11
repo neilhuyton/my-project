@@ -7095,8 +7095,8 @@ var Unpromise = class Unpromise2 {
         status: "fulfilled",
         value
       };
-      subscribers === null || subscribers === void 0 || subscribers.forEach(({ resolve }) => {
-        resolve(value);
+      subscribers === null || subscribers === void 0 || subscribers.forEach(({ resolve: resolve2 }) => {
+        resolve2(value);
       });
     });
     if ("catch" in thenReturn) thenReturn.catch((reason) => {
@@ -7238,15 +7238,15 @@ function resolveSelfTuple(promise) {
 }
 __name(resolveSelfTuple, "resolveSelfTuple");
 function withResolvers() {
-  let resolve;
+  let resolve2;
   let reject;
   const promise = new Promise((_resolve, _reject) => {
-    resolve = _resolve;
+    resolve2 = _resolve;
     reject = _reject;
   });
   return {
     promise,
-    resolve,
+    resolve: resolve2,
     reject
   };
 }
@@ -7296,8 +7296,8 @@ function timerResource(ms) {
   let timer = null;
   return makeResource({ start() {
     if (timer) throw new Error("Timer already started");
-    const promise = new Promise((resolve) => {
-      timer = setTimeout(() => resolve(disposablePromiseTimerResult), ms);
+    const promise = new Promise((resolve2) => {
+      timer = setTimeout(() => resolve2(disposablePromiseTimerResult), ms);
     });
     return promise;
   } }, () => {
@@ -7526,15 +7526,15 @@ function _takeWithGrace() {
 }
 __name(_takeWithGrace, "_takeWithGrace");
 function createDeferred() {
-  let resolve;
+  let resolve2;
   let reject;
   const promise = new Promise((res, rej) => {
-    resolve = res;
+    resolve2 = res;
     reject = rej;
   });
   return {
     promise,
-    resolve,
+    resolve: resolve2,
     reject
   };
 }
@@ -13167,13 +13167,13 @@ function genSalt(rounds, seed_length, callback) {
       throw Error("Illegal callback: " + typeof callback);
     _async(callback);
   } else
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve2, reject) {
       _async(function(err, res) {
         if (err) {
           reject(err);
           return;
         }
-        resolve(res);
+        resolve2(res);
       });
     });
 }
@@ -13208,13 +13208,13 @@ function hash(password, salt, callback, progressCallback) {
       throw Error("Illegal callback: " + typeof callback);
     _async(callback);
   } else
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve2, reject) {
       _async(function(err, res) {
         if (err) {
           reject(err);
           return;
         }
-        resolve(res);
+        resolve2(res);
       });
     });
 }
@@ -13270,13 +13270,13 @@ function compare(password, hashValue, callback, progressCallback) {
       throw Error("Illegal callback: " + typeof callback);
     _async(callback);
   } else
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve2, reject) {
       _async(function(err, res) {
         if (err) {
           reject(err);
           return;
         }
-        resolve(res);
+        resolve2(res);
       });
     });
 }
@@ -14893,6 +14893,7 @@ var appRouter = router({
 
 // src/functions/trpc.ts
 var import_client = __toESM(require_client(), 1);
+import { resolve } from "path";
 var handler = /* @__PURE__ */ __name(async (event) => {
   const corsHeaders = {
     "Access-Control-Allow-Origin": event.headers.origin || "http://localhost:5173",
@@ -14921,6 +14922,10 @@ var handler = /* @__PURE__ */ __name(async (event) => {
   }
   let prisma;
   try {
+    process.env.PRISMA_QUERY_ENGINE_LIBRARY = resolve(
+      __dirname,
+      "./prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node"
+    );
     prisma = new import_client.PrismaClient({
       datasources: { db: { url: dbUrl } },
       log: ["query", "info", "warn", "error"]
