@@ -3,14 +3,15 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 
-interface LoginResponse {
+export interface LoginResponse {
+  // Added export
   id: string;
   email: string;
   token: string;
   refreshToken: string;
 }
 
-const formSchema = z.object({
+export const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z
     .string()

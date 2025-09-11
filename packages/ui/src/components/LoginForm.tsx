@@ -1,3 +1,4 @@
+// packages/ui/src/components/LoginForm.tsx
 import { cn } from "@/lib/utils";
 import {
   Form,
@@ -9,9 +10,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useLogin } from "../hooks/useLogin";
+import { useLogin, formSchema } from "../hooks/useLogin"; // Export formSchema
 
-interface LoginResponse {
+export { formSchema }; // Add this export
+
+export interface LoginResponse {
   id: string;
   email: string;
   token: string;
@@ -30,7 +33,7 @@ interface LoginFormProps {
   onNavigateToRegister?: () => void;
 }
 
-function LoginForm({
+export function LoginForm({
   loginMutation,
   onSuccess,
   onError,
@@ -155,7 +158,7 @@ function LoginForm({
                 {isPending ? "Logging in..." : "Login"}
               </Button>
               <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{" "}
+                Don't have an account?{" "}
                 <a
                   href="#"
                   role="link"
@@ -177,5 +180,3 @@ function LoginForm({
     </div>
   );
 }
-
-export default LoginForm;
