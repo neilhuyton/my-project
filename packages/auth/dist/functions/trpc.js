@@ -14857,6 +14857,7 @@ var bcryptjs_default = {
 };
 
 // src/router.ts
+import crypto2 from "crypto";
 var loginSchema = external_exports.object({
   email: external_exports.string().email("Invalid email address"),
   password: external_exports.string().min(8, "Password must be at least 8 characters")
@@ -14875,10 +14876,7 @@ var appRouter = router({
     if (!user) {
       throw new Error("Invalid email or password");
     }
-    const isPasswordValid = await bcryptjs_default.compare(
-      input.password,
-      user.password
-    );
+    const isPasswordValid = await bcryptjs_default.compare(input.password, user.password);
     if (!isPasswordValid) {
       throw new Error("Invalid email or password");
     }
@@ -14887,6 +14885,32 @@ var appRouter = router({
       email: user.email,
       token: "mock-jwt-token-" + user.id,
       refreshToken: "mock-refresh-" + user.id
+    };
+  }),
+  register: publicProcedure.input(loginSchema).mutation(async ({ input, ctx }) => {
+    const existingUser = await ctx.prisma.user.findUnique({
+      where: { email: input.email }
+    });
+    if (existingUser) {
+      throw new Error("Email already exists");
+    }
+    const hashedPassword = await bcryptjs_default.hash(input.password, 10);
+    const user = await ctx.prisma.user.create({
+      data: {
+        id: crypto2.randomUUID(),
+        email: input.email,
+        password: hashedPassword,
+        verificationToken: crypto2.randomUUID(),
+        isEmailVerified: false,
+        refreshToken: crypto2.randomUUID(),
+        createdAt: /* @__PURE__ */ new Date(),
+        updatedAt: /* @__PURE__ */ new Date()
+      }
+    });
+    return {
+      id: user.id,
+      email: user.email,
+      message: "Registration successful! Please check your email to verify your account."
     };
   })
 });

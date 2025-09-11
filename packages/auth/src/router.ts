@@ -1,9 +1,8 @@
-// packages/auth/src/router.ts
 import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
-import bcrypt from "bcryptjs"; // Now installed
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
-// Shared Zod schema (reuse in form)
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
@@ -20,34 +19,58 @@ export const appRouter = router({
     });
     return users.map((user: UserEmail) => user.email);
   }),
-  login: publicProcedure
-    .input(loginSchema) // Zod validation here
+  login: publicProcedure.input(loginSchema).mutation(async ({ input, ctx }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: { email: input.email },
+    });
+
+    if (!user) {
+      throw new Error("Invalid email or password");
+    }
+
+    const isPasswordValid = await bcrypt.compare(input.password, user.password);
+
+    if (!isPasswordValid) {
+      throw new Error("Invalid email or password");
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      token: "mock-jwt-token-" + user.id,
+      refreshToken: "mock-refresh-" + user.id,
+    };
+  }),
+  register: publicProcedure
+    .input(loginSchema)
     .mutation(async ({ input, ctx }) => {
-      // Find user
-      const user = await ctx.prisma.user.findUnique({
+      const existingUser = await ctx.prisma.user.findUnique({
         where: { email: input.email },
       });
 
-      if (!user) {
-        throw new Error("Invalid email or password");
+      if (existingUser) {
+        throw new Error("Email already exists");
       }
 
-      // Compare hashed password (assume password is hashed in DB)
-      const isPasswordValid = await bcrypt.compare(
-        input.password,
-        user.password
-      );
+      const hashedPassword = await bcrypt.hash(input.password, 10);
+      const user = await ctx.prisma.user.create({
+        data: {
+          id: crypto.randomUUID(),
+          email: input.email,
+          password: hashedPassword,
+          verificationToken: crypto.randomUUID(),
+          isEmailVerified: false,
+          refreshToken: crypto.randomUUID(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
 
-      if (!isPasswordValid) {
-        throw new Error("Invalid email or password");
-      }
-
-      // Mock tokens (replace with real JWT)
       return {
         id: user.id,
         email: user.email,
-        token: "mock-jwt-token-" + user.id,
-        refreshToken: "mock-refresh-" + user.id,
+        message:
+          "Registration successful! Please check your email to verify your account.",
       };
     }),
 });
