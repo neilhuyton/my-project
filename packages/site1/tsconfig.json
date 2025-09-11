@@ -20,11 +20,10 @@
       "@my-project/ui": ["../ui/dist/index.d.ts"],
       "@my-project/ui/*": ["../ui/dist/*"],
       "@my-project/site1": ["./src"],
-      "@my-project/site1/*": ["./src/*"],
-      "@my-project/site1/serverContext": ["./dist/serverContext.d.ts"]
+      "@my-project/site1/*": ["./src/*"]
     }
   },
-  "include": ["src/main.tsx", "src/trpc.ts"],
-  "exclude": ["dist", "node_modules", "src/serverContext.ts", "src/prisma.ts"],
-  "references": [{ "path": "../ui" }, { "path": "./tsconfig.server.json" }]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"],
+  "references": [{ "path": "../ui" }]
 }

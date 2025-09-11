@@ -1,31 +1,30 @@
 // packages/auth/eslint.config.js
-import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "node_modules", ".netlify/**", "prisma/**"] }, // Added prisma/**
+  // Local ignores for this package's dist
+  { ignores: ["dist"] },
+
+  // Extended ignores for auth-specific folders
+  { ignores: [".netlify/**", "prisma/**"] },
+
+  // Explicit TS parser for Node-only files to fix parsing errors
   {
     files: ["**/*.ts"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
       parser: tseslint.parser,
+      parserOptions: {
+        project: "./tsconfig.json",  // Enables type-aware linting
+      },
       globals: {
-        ...globals.node,
-        ...globals.es2021,
+        ...globals.node,  // Node-specific globals
       },
     },
     plugins: {
       "@typescript-eslint": tseslint.plugin,
     },
-    rules: {
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        { argsIgnorePattern: "^_" },
-      ],
-    },
-  },
-  js.configs.recommended,
-  ...tseslint.configs.recommended
+  }
 );

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter @my-project/ui build && pnpm --filter @my-project/auth build && dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 tsc -p tsconfig.json --noEmitOnError false && tsc -p tsconfig.server.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo'",
+"build": "pnpm --filter @my-project/ui build && pnpm --filter @my-project/auth build && dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 tsc -p tsconfig.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo'",
     "build:server": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 tsc -p tsconfig.server.json --noEmitOnError false'",
     "dev": "dotenv -e ../../.env -- sh -c 'DATABASE_URL=$DATABASE_URL_SITE2 vite'",
     "preview": "vite preview",
@@ -22,17 +22,15 @@
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.13.0",
     "@types/node": "^22.7.5",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
-    "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.1",
+    "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@vitejs/plugin-react": "^4.3.3",
     "dotenv-cli": "^7.4.2",
-    "eslint": "^9.13.0",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.12",
     "globals": "^15.11.0",
     "prisma": "^5.22.0",
@@ -43,10 +41,6 @@
   "exports": {
     ".": "./dist/index.js",
     "./prisma/client": "./prisma/client/index.js",
-    "./prisma/client/*": "./prisma/client/*",
-    "./serverContext": {
-      "import": "./dist/serverContext.js",
-      "types": "./dist/serverContext.d.ts"
-    }
+    "./prisma/client/*": "./prisma/client/*"
   }
 }

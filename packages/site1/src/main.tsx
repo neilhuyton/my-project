@@ -1,3 +1,4 @@
+// packages/site1/src/main.tsx
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { Button } from "@my-project/ui";

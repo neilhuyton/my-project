@@ -167,6 +167,10 @@ const config = {
       {
         "fromEnvVar": null,
         "value": "rhel-openssl-3.0.x"
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-1.0.x"
       }
     ],
     "previewFeatures": [],
@@ -192,8 +196,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"./client\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id                          String              @id @default(uuid())\n  email                       String              @unique\n  password                    String\n  verificationToken           String?\n  isEmailVerified             Boolean             @default(false)\n  resetPasswordToken          String?\n  resetPasswordTokenExpiresAt DateTime?\n  refreshToken                String?\n  createdAt                   DateTime            @default(now())\n  updatedAt                   DateTime            @updatedAt\n  goals                       Goal[]\n  weights                     WeightMeasurement[]\n\n  @@index([createdAt])\n}\n\nmodel WeightMeasurement {\n  id        String   @id @default(uuid())\n  userId    String\n  weightKg  Float\n  note      String?\n  createdAt DateTime @default(now())\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([createdAt])\n}\n\nmodel Goal {\n  id           String    @id @default(uuid())\n  userId       String\n  goalWeightKg Float\n  goalSetAt    DateTime  @default(now())\n  reachedAt    DateTime?\n  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([goalSetAt])\n}\n",
-  "inlineSchemaHash": "9af543bd5cfcbd13de46eb28dc2930aaa6e2ce098dd665557321c104aafe11bd",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"./client\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\", \"rhel-openssl-1.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id                          String              @id @default(uuid())\n  email                       String              @unique\n  password                    String\n  verificationToken           String?\n  isEmailVerified             Boolean             @default(false)\n  resetPasswordToken          String?\n  resetPasswordTokenExpiresAt DateTime?\n  refreshToken                String?\n  createdAt                   DateTime            @default(now())\n  updatedAt                   DateTime            @updatedAt\n  goals                       Goal[]\n  weights                     WeightMeasurement[]\n\n  @@index([createdAt])\n}\n\nmodel WeightMeasurement {\n  id        String   @id @default(uuid())\n  userId    String\n  weightKg  Float\n  note      String?\n  createdAt DateTime @default(now())\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([createdAt])\n}\n\nmodel Goal {\n  id           String    @id @default(uuid())\n  userId       String\n  goalWeightKg Float\n  goalSetAt    DateTime  @default(now())\n  reachedAt    DateTime?\n  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([goalSetAt])\n}\n",
+  "inlineSchemaHash": "624826d0dd598cbc4a73a336544b465f2a62efaf6edfc353f4d46ec569524741",
   "copyEngine": true
 }
 
@@ -237,6 +241,10 @@ path.join(process.cwd(), "prisma/client/libquery_engine-debian-openssl-3.0.x.so.
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");
 path.join(process.cwd(), "prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-rhel-openssl-1.0.x.so.node");
+path.join(process.cwd(), "prisma/client/libquery_engine-rhel-openssl-1.0.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "prisma/client/schema.prisma")
