@@ -2,6 +2,7 @@ import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -28,18 +29,29 @@ export const appRouter = router({
       throw new Error("Invalid email or password");
     }
 
+    if (!user.isEmailVerified) {
+      throw new Error("Please verify your email before logging in");
+    }
+
     const isPasswordValid = await bcrypt.compare(input.password, user.password);
 
     if (!isPasswordValid) {
       throw new Error("Invalid email or password");
     }
 
-    return {
-      id: user.id,
-      email: user.email,
-      token: "mock-jwt-token-" + user.id,
-      refreshToken: "mock-refresh-" + user.id,
-    };
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET || "your-secret-key",
+      { expiresIn: "1h" }
+    );
+
+    const refreshToken = crypto.randomUUID();
+    await ctx.prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken },
+    });
+
+    return { id: user.id, email: user.email, token, refreshToken };
   }),
   register: publicProcedure
     .input(loginSchema)
@@ -71,6 +83,30 @@ export const appRouter = router({
         email: user.email,
         message:
           "Registration successful! Please check your email to verify your account.",
+      };
+    }),
+  refresh: publicProcedure
+    .input(z.object({ refreshToken: z.string().uuid() }))
+    .mutation(async ({ input, ctx }) => {
+      const { refreshToken } = input;
+
+      const user = await ctx.prisma.user.findFirst({
+        where: { refreshToken },
+      });
+
+      if (!user) {
+        throw new Error("Invalid refresh token");
+      }
+
+      const newAccessToken = jwt.sign(
+        { userId: user.id, email: user.email },
+        process.env.JWT_SECRET || "your-secret-key",
+        { expiresIn: "1h" }
+      );
+
+      return {
+        token: newAccessToken,
+        refreshToken,
       };
     }),
 });
