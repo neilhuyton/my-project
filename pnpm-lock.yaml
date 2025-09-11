@@ -4,6 +4,12 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@tanstack/react-query': ^5.59.15
+  '@trpc/client': ^11.5.1
+  '@trpc/react-query': ^11.5.1
+  zod: ^3.25.76
+
 importers:
 
   .:
@@ -39,7 +45,7 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
       zod:
-        specifier: ^3.24.0
+        specifier: ^3.25.76
         version: 3.25.76
     devDependencies:
       '@types/bcryptjs':
@@ -97,7 +103,7 @@ importers:
         specifier: ^19.1.1
         version: 19.1.1(react@19.1.1)
       zod:
-        specifier: ^3.24.0
+        specifier: ^3.25.76
         version: 3.25.76
     devDependencies:
       '@types/node':
@@ -155,7 +161,7 @@ importers:
         specifier: ^5.22.0
         version: 5.22.0(prisma@5.22.0)
       '@tanstack/react-query':
-        specifier: ^5.59.13
+        specifier: ^5.59.15
         version: 5.87.4(react@19.1.1)
       '@trpc/client':
         specifier: ^11.5.1
@@ -1301,8 +1307,8 @@ packages:
   '@trpc/react-query@11.5.1':
     resolution: {integrity: sha512-Y+e0Lp7na1LAjoYqtHVjxpfayOuvvnuchS723b4dsI/V0h3irBuI+bx38S3m7RgaIh/L1av1SldFrKIauk+r/A==}
     peerDependencies:
-      '@tanstack/react-query': ^5.80.3
-      '@trpc/client': 11.5.1
+      '@tanstack/react-query': ^5.59.15
+      '@trpc/client': ^11.5.1
       '@trpc/server': 11.5.1
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
