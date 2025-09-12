@@ -1,0 +1,36 @@
+{
+  "name": "@my-project/weight",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/router.js",
+  "types": "./dist/router.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/router.js",
+      "types": "./dist/router.d.ts"
+    },
+    "./*": {
+      "import": "./dist/*",
+      "types": "./dist/*"
+    }
+  },
+  "scripts": {
+    "build": "sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x,rhel-openssl-1.0.x PRISMA_LOG_QUERIES=true DATABASE_URL=$DATABASE_URL_SITE1 npx prisma generate --schema=prisma/schema.prisma && ls -l node_modules/.prisma/client/ || echo \"No binary in weight\" && tsc'",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --ext .ts",
+    "prisma": "sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x,rhel-openssl-1.0.x PRISMA_LOG_QUERIES=true DATABASE_URL=$DATABASE_URL_SITE1 npx prisma generate --schema=prisma/schema.prisma && ls -l node_modules/.prisma/client/ || echo \"No binary in weight\"'"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "@trpc/server": "^11.5.1",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "@typescript-eslint/eslint-plugin": "^8.8.1",
+    "@typescript-eslint/parser": "^8.8.1",
+    "prisma": "^5.22.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.8.1"
+  }
+}

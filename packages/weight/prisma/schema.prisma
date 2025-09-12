@@ -1,0 +1,50 @@
+// packages/weight/prisma/schema.prisma
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../node_modules/.prisma/client"
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                          String              @id @default(uuid())
+  email                       String              @unique
+  password                    String
+  verificationToken           String?
+  isEmailVerified             Boolean             @default(false)
+  resetPasswordToken          String?
+  resetPasswordTokenExpiresAt DateTime?
+  refreshToken                String?
+  createdAt                   DateTime            @default(now())
+  updatedAt                   DateTime            @updatedAt
+  goals                       Goal[]
+  weights                     WeightMeasurement[]
+
+  @@index([createdAt])
+}
+
+model WeightMeasurement {
+  id        String   @id @default(uuid())
+  userId    String
+  weightKg  Float
+  note      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+}
+
+model Goal {
+  id           String    @id @default(uuid())
+  userId       String
+  goalWeightKg Float
+  goalSetAt    DateTime  @default(now())
+  reachedAt    DateTime?
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([goalSetAt])
+}
