@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import { z } from "zod";
 import { createTRPCErrorResponse } from "../utils";
 import { mockUsers } from "../mockUsers";
+import crypto from "crypto";
 
 const resetPasswordInputSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -10,64 +11,64 @@ const resetPasswordInputSchema = z.object({
 export const resetPasswordRequestHandler = http.post(
   "http://localhost:8888/.netlify/functions/trpc/resetPassword.request",
   async ({ request }) => {
-    let body;
-    try {
-      const text = await request.text();
-      console.log("ResetPassword request body:", text); // Debug
-      body = text ? JSON.parse(text) : {};
-    } catch {
+    const body = await request.json().catch(() => ({}));
+    console.log("ResetPassword input:", body);
+
+    const input =
+      typeof body === "object" && body !== null && "input" in body
+        ? body.input
+        : body;
+
+    const result = resetPasswordInputSchema.safeParse(input);
+    if (!result.success) {
+      console.log("ResetPassword validation error:", result.error.errors);
       return createTRPCErrorResponse(
         0,
-        "Failed to parse JSON body",
+        result.error.errors[0].message,
         -32600,
         400,
         "resetPassword.request"
       );
     }
 
-    const input = body.input ? body.input : body;
-    console.log("ResetPassword input:", input); // Debug
-    const result = resetPasswordInputSchema.safeParse(input);
-    if (!result.success) {
-      console.log("ResetPassword validation error:", result.error.errors); // Debug
-      return new HttpResponse(
-        JSON.stringify({
-          id: 0,
-          error: {
-            message: result.error.errors[0].message,
-            code: -32600,
-            data: {
-              code: "BAD_REQUEST",
-              httpStatus: 400,
-              path: "resetPassword.request",
-            },
-          },
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
     const { email } = result.data;
     const user = mockUsers.find((u) => u.email === email);
 
-    // Always return a success response to avoid leaking user existence
-    return new HttpResponse(
-      JSON.stringify({
-        id: 0,
-        result: {
-          type: "data",
-          data: {
-            message: "If the email exists, a reset link has been sent.",
-          },
+    let resetToken: string | undefined;
+    if (user) {
+      resetToken = crypto.randomUUID();
+      user.resetPasswordToken = resetToken;
+      user.resetPasswordTokenExpiresAt = new Date(
+        Date.now() + 60 * 60 * 1000
+      ).toISOString();
+      console.log(
+        `Generated reset link for ${email}: http://localhost:5173/confirm-reset-password?token=${resetToken}`
+      );
+    }
+
+    return HttpResponse.json({
+      id: 0,
+      result: {
+        type: "data",
+        data: {
+          message: "If the email exists, a reset link has been sent.",
+          token: resetToken,
         },
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
+      },
+    });
+  }
+);
+
+export const resetPasswordRequestFailureHandler = http.post(
+  "http://localhost:8888/.netlify/functions/trpc/resetPassword.request",
+  () => {
+    console.log("Handling resetPassword.request failure");
+    return createTRPCErrorResponse(
+      0,
+      "Failed to send reset email",
+      -32600,
+      500,
+      "resetPassword.request"
     );
   }
 );

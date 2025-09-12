@@ -6,7 +6,8 @@ import jwt from "jsonwebtoken";
 import {
   sendVerificationEmail,
   sendResetPasswordEmail,
-} from "@my-project/email"; // Add sendResetPasswordEmail
+  sendPasswordChangeNotification,
+} from "@my-project/email";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -85,7 +86,6 @@ export const appRouter = router({
         },
       });
 
-      // Construct EmailConfig
       const emailConfig = {
         host: process.env.EMAIL_HOST!,
         port: Number(process.env.EMAIL_PORT),
@@ -97,7 +97,6 @@ export const appRouter = router({
           "http://localhost:5173",
       };
 
-      // Send verification email
       const emailResult = await sendVerificationEmail(
         user.email,
         verificationToken,
@@ -106,7 +105,6 @@ export const appRouter = router({
 
       if (!emailResult.success) {
         console.error("Failed to send verification email:", emailResult.error);
-        // Continue registration to avoid blocking the user
       }
 
       return {
@@ -156,7 +154,6 @@ export const appRouter = router({
           where: { email },
         });
 
-        // Always return success to avoid leaking user existence
         if (!user) {
           return {
             message: "If the email exists, a reset link has been sent.",
@@ -164,7 +161,7 @@ export const appRouter = router({
         }
 
         const resetToken = crypto.randomUUID();
-        const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour expiry
+        const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
         await ctx.prisma.user.update({
           where: { email },
@@ -174,7 +171,6 @@ export const appRouter = router({
           },
         });
 
-        // Construct EmailConfig
         const emailConfig = {
           host: process.env.EMAIL_HOST!,
           port: Number(process.env.EMAIL_PORT),
@@ -186,7 +182,6 @@ export const appRouter = router({
             "http://localhost:5173",
         };
 
-        // Send reset email
         const emailResult = await sendResetPasswordEmail(
           email,
           resetToken,
@@ -195,10 +190,66 @@ export const appRouter = router({
 
         if (!emailResult.success) {
           console.error("Failed to send reset email:", emailResult.error);
-          // Return success to avoid blocking the user
+          throw new Error("Failed to send reset email");
         }
 
         return { message: "If the email exists, a reset link has been sent." };
+      }),
+
+    confirm: publicProcedure
+      .input(
+        z.object({
+          token: z.string().min(1, { message: "Reset token is required" }),
+          newPassword: z
+            .string()
+            .min(8, { message: "Password must be at least 8 characters" }),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const user = await ctx.prisma.user.findFirst({
+          where: {
+            resetPasswordToken: input.token,
+            resetPasswordTokenExpiresAt: { gt: new Date() },
+          },
+        });
+
+        if (!user) {
+          throw new Error("Invalid or expired token");
+        }
+
+        const hashedPassword = await bcrypt.hash(input.newPassword, 10);
+        const updatedUser = await ctx.prisma.user.update({
+          where: { id: user.id },
+          data: {
+            password: hashedPassword,
+            resetPasswordToken: null,
+            resetPasswordTokenExpiresAt: null,
+          },
+        });
+
+        const emailConfig = {
+          host: process.env.EMAIL_HOST!,
+          port: Number(process.env.EMAIL_PORT),
+          user: process.env.EMAIL_USER!,
+          pass: process.env.EMAIL_PASS!,
+          from: `${process.env.APP_NAME} <${process.env.EMAIL_FROM}>`,
+          appUrl:
+            process.env[`VITE_APP_URL_${ctx.siteId.toUpperCase()}`] ||
+            "http://localhost:5173",
+        };
+
+        const emailResult = await sendPasswordChangeNotification(
+          updatedUser.email,
+          emailConfig
+        );
+        if (!emailResult.success) {
+          console.error(
+            "Failed to send password change notification:",
+            emailResult.error
+          );
+        }
+
+        return { message: "Password reset successfully" };
       }),
   }),
 });

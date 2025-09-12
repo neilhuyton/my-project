@@ -30152,6 +30152,27 @@ async function sendResetPasswordEmail(to2, resetToken, config2) {
   }
 }
 __name(sendResetPasswordEmail, "sendResetPasswordEmail");
+async function sendPasswordChangeNotification(to2, config2) {
+  const transporter = createTransporter(config2);
+  const mailOptions = {
+    from: config2.from,
+    to: to2,
+    subject: "Your Password Has Been Changed",
+    html: `
+      <h1>Password Change Notification</h1>
+      <p>The password for your account has been successfully changed.</p>
+      <p>If you initiated this change, no further action is required. If you did not request this change, please contact support immediately at <a href="mailto:support@yourdomain.com">support@yourdomain.com</a>.</p>
+      <p>Thank you,<br>Your App Team</p>
+    `
+  };
+  try {
+    await transporter.sendMail(mailOptions);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+__name(sendPasswordChangeNotification, "sendPasswordChangeNotification");
 
 // src/router.ts
 var loginSchema = external_exports.object({
@@ -30291,8 +30312,53 @@ var appRouter = router({
       );
       if (!emailResult.success) {
         console.error("Failed to send reset email:", emailResult.error);
+        throw new Error("Failed to send reset email");
       }
       return { message: "If the email exists, a reset link has been sent." };
+    }),
+    confirm: publicProcedure.input(
+      external_exports.object({
+        token: external_exports.string().min(1, { message: "Reset token is required" }),
+        newPassword: external_exports.string().min(8, { message: "Password must be at least 8 characters" })
+      })
+    ).mutation(async ({ input, ctx }) => {
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          resetPasswordToken: input.token,
+          resetPasswordTokenExpiresAt: { gt: /* @__PURE__ */ new Date() }
+        }
+      });
+      if (!user) {
+        throw new Error("Invalid or expired token");
+      }
+      const hashedPassword = await bcryptjs_default.hash(input.newPassword, 10);
+      const updatedUser = await ctx.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          password: hashedPassword,
+          resetPasswordToken: null,
+          resetPasswordTokenExpiresAt: null
+        }
+      });
+      const emailConfig = {
+        host: process.env.EMAIL_HOST,
+        port: Number(process.env.EMAIL_PORT),
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+        from: `${process.env.APP_NAME} <${process.env.EMAIL_FROM}>`,
+        appUrl: process.env[`VITE_APP_URL_${ctx.siteId.toUpperCase()}`] || "http://localhost:5173"
+      };
+      const emailResult = await sendPasswordChangeNotification(
+        updatedUser.email,
+        emailConfig
+      );
+      if (!emailResult.success) {
+        console.error(
+          "Failed to send password change notification:",
+          emailResult.error
+        );
+      }
+      return { message: "Password reset successfully" };
     })
   })
 });

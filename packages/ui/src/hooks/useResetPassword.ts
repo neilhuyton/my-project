@@ -1,17 +1,15 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
 });
 
-export interface ResetPasswordResponse {
-  message: string;
-}
+export type FormValues = z.infer<typeof formSchema>;
 
-type FormValues = z.infer<typeof formSchema>;
+export type ResetPasswordResponse = { message: string; token?: string };
 
 interface UseResetPasswordProps {
   resetMutation: (data: FormValues) => Promise<ResetPasswordResponse>;
@@ -33,38 +31,51 @@ export const useResetPassword = ({
   onError,
   onMutate,
 }: UseResetPasswordProps): UseResetPasswordReturn => {
-  const [isPending, setIsPending] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "" },
     mode: "onChange",
   });
 
+  const [message, setMessage] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
+
+  useEffect(() => {
+    console.log("useResetPassword message state changed:", message);
+  }, [message]);
+
   const handleSubmit = async (data: FormValues) => {
-    const isValid = await form.trigger();
+    console.log("useResetPassword handleSubmit called with:", data);
+    const isValid = await form.trigger("email");
+    console.log("Form validation result:", isValid, "Errors:", form.formState.errors);
     if (!isValid) {
-      console.log("Form validation failed:", form.formState.errors);
       return;
     }
 
     setIsPending(true);
+    console.log("Clearing message before mutation");
     setMessage(null);
+    console.log("Calling onMutate");
     onMutate?.();
 
     try {
+      console.log("Calling resetMutation with:", data);
       const response = await resetMutation(data);
+      console.log("Raw mutation response:", response);
       setMessage(response.message);
+      console.log("Set message to:", response.message);
       onSuccess?.(response);
       form.reset();
+      console.log("Form reset completed, message:", response.message);
     } catch (error: unknown) {
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+        error instanceof Error ? error.message : "Failed to send reset link";
+      console.log("Mutation error:", errorMessage);
       setMessage(`Failed to send reset link: ${errorMessage}`);
       onError?.(errorMessage);
     } finally {
       setIsPending(false);
+      console.log("isPending set to false, final message:", message);
     }
   };
 

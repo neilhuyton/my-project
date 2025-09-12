@@ -1,138 +1,102 @@
-import { createRoute, redirect, type RootRoute } from "@tanstack/react-router";
-import { Register, formSchema } from "@my-project/ui";
-import { LoginForm } from "@my-project/ui";
-import { useAuthStore } from "../store/authStore";
-import { jwtDecode } from "jwt-decode";
-import { z } from "zod";
-import { trpc } from "../trpc";
-import { TRPCClientErrorLike } from "@trpc/client";
-import type { AppRouter } from "@my-project/auth";
+import {
+  LoginForm,
+  Register,
+  ResetPasswordForm,
+  ConfirmResetPasswordForm,
+} from "@my-project/ui";
+import { createRootRoute, createRoute } from "@tanstack/react-router";
+import { trpcClient } from "../trpc";
 
-interface DecodedToken {
-  userId: string;
-  email: string;
-  iat: number;
-  exp: number;
-}
+const rootRoute = createRootRoute();
 
-let redirectCount = 0;
-
-const checkAuth = (currentPath: string) => {
-  console.log(`checkAuth, attempt ${++redirectCount}, path: ${currentPath}`);
-  if (redirectCount > 1) {
-    console.error("Redirect loop detected");
-    return false;
-  }
-  if (currentPath === "/login" || currentPath === "/register") {
-    console.log("Skipping auth check for login or register");
-    return true;
-  }
-  const { isLoggedIn, token } = useAuthStore.getState();
-  console.log("checkAuth state:", { isLoggedIn, token });
-  if (!isLoggedIn || !token) {
-    throw redirect({ to: "/login" });
-  }
-  try {
-    const decoded = jwtDecode<DecodedToken>(token);
-    const now = Math.floor(Date.now() / 1000);
-    if (decoded.exp < now) {
-      console.log("Token expired, allowing refresh attempt");
-      return false; // Let trpcClient handle refresh
-    }
-    return true;
-  } catch {
-    throw redirect({ to: "/login" });
-  }
-};
-
-export const homeRoute = (rootRoute: RootRoute) =>
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path: "/",
-    beforeLoad: ({ location }) => {
-      console.log("homeRoute beforeLoad, path:", location.pathname);
-      if (!checkAuth(location.pathname)) {
-        return; // Allow trpcClient to attempt refresh
+const loginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/login",
+  component: () => (
+    <LoginForm
+      loginMutation={(data) => {
+        console.log("LoginForm mutation called with:", data);
+        return trpcClient.login.mutate(data);
+      }}
+      onSuccess={() => (window.location.href = "/weight")}
+      onNavigateToResetPassword={() =>
+        (window.location.href = "/reset-password")
       }
-    },
-    component: () => (
-      <div className="p-4">
-        <h1 className="text-2xl font-bold mb-4">Welcome to Site1</h1>
-        <p>Authenticated content goes here.</p>
-      </div>
-    ),
-  });
+      onNavigateToRegister={() => (window.location.href = "/register")}
+    />
+  ),
+});
 
-export const registerRoute = (rootRoute: RootRoute) =>
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path: "/register",
-    component: () => {
-      console.log("Rendering register route");
-      const registerMutation = trpc.register.useMutation({
-        onSuccess: (data) => {
-          console.log("Register success:", data);
-          alert(`Registration successful! Message: ${data.message}`);
-        },
-        onError: (error: TRPCClientErrorLike<AppRouter>) => {
-          console.error("Register error:", error);
-          alert(`Registration failed: ${error.message}`);
-        },
-      });
+const registerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/register",
+  component: () => (
+    <Register
+      registerMutation={(data) => {
+        console.log("Register mutation called with:", data);
+        return trpcClient.register.mutate(data);
+      }}
+      onNavigateToLogin={() => (window.location.href = "/login")}
+    />
+  ),
+});
 
-      const handleRegister = async (data: z.infer<typeof formSchema>) => {
-        console.log("site1 registerMutation data:", data);
-        return registerMutation.mutateAsync(data);
-      };
+const resetPasswordRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/reset-password",
+  component: () => (
+    <ResetPasswordForm
+      key={Date.now()} // Force re-render on mount
+      resetMutation={(data) => {
+        console.log("ResetPasswordForm mutation called with:", data);
+        return trpcClient.resetPassword.request.mutate(data);
+      }}
+      onNavigateToLogin={() => (window.location.href = "/login")}
+      onSuccess={(data) => console.log("ResetPasswordForm onSuccess:", data)}
+      onError={(error) => console.log("ResetPasswordForm onError:", error)}
+      onMutate={() => console.log("ResetPasswordForm onMutate")}
+    />
+  ),
+});
 
-      return (
-        <div className="p-4">
-          <h1 className="text-2xl font-bold mb-4">Site1 - Register</h1>
-          <Register
-            registerMutation={handleRegister}
-            onSuccess={() => {}}
-            onError={() => {}}
-            onNavigateToLogin={() => {
-              window.location.href = "/login";
-            }}
-          />
-        </div>
-      );
-    },
-  });
+const confirmResetPasswordRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/confirm-reset-password",
+  component: () => {
+    const { token } = confirmResetPasswordRoute.useSearch({
+      select: (search: { token?: string }) => ({ token: search.token || "" }),
+    });
+    console.log("ConfirmResetPasswordRoute token from query:", token);
+    if (!token) {
+      console.log("No token provided in query, redirecting to /login");
+      window.location.href = "/login";
+      return null;
+    }
+    return (
+      <ConfirmResetPasswordForm
+        token={token}
+        resetMutation={(data) => {
+          console.log("ConfirmResetPasswordForm mutation called with:", data);
+          return trpcClient.resetPassword.confirm.mutate(data);
+        }}
+        onNavigateToLogin={() => (window.location.href = "/login")}
+      />
+    );
+  },
+});
 
-export const loginRoute = (rootRoute: RootRoute) =>
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path: "/login",
-    component: () => {
-      console.log("Rendering login route");
-      const loginMutation = trpc.login.useMutation({
-        onSuccess: (data) => {
-          console.log("Login success:", data);
-          useAuthStore.getState().login(data.id, data.token, data.refreshToken);
-          alert(`Login successful! Token: ${data.token}`);
-        },
-        onError: (error: TRPCClientErrorLike<AppRouter>) => {
-          console.error("Login error:", error);
-          alert(`Login failed: ${error.message}`);
-        },
-      });
+const weightRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/weight",
+  component: () => <div>Weight Dashboard</div>,
+});
 
-      const handleLogin = async (data: z.infer<typeof formSchema>) => {
-        console.log("handleLogin data:", data);
-        return loginMutation.mutateAsync(data);
-      };
+const routeTree = rootRoute.addChildren([
+  loginRoute,
+  registerRoute,
+  resetPasswordRoute,
+  confirmResetPasswordRoute,
+  weightRoute,
+]);
 
-      return (
-        <div className="p-4">
-          <h1 className="text-2xl font-bold mb-4">Site1 - Login</h1>
-          <LoginForm
-            loginMutation={handleLogin}
-            onSuccess={() => {}}
-            onError={() => {}}
-          />
-        </div>
-      );
-    },
-  });
+export { routeTree };

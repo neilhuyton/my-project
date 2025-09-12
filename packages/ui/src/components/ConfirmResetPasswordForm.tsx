@@ -9,36 +9,51 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useResetPassword, FormValues } from "../hooks/useResetPassword";
+import {
+  useConfirmResetPassword,
+  FormValues,
+} from "../hooks/useConfirmResetPassword";
 import { useRouter } from "@tanstack/react-router";
 import { Logo } from "./Logo";
+import { useEffect } from "react";
 
-interface ResetPasswordFormProps {
+interface ConfirmResetPasswordFormProps {
   resetMutation: (
-    data: FormValues
-  ) => Promise<{ message: string; token?: string }>;
-  onSuccess?: (data: { message: string; token?: string }) => void;
+    data: FormValues & { token: string }
+  ) => Promise<{ message: string }>;
+  onSuccess?: (data: { message: string }) => void;
   onError?: (error: string) => void;
   onMutate?: () => void;
   onNavigateToLogin?: () => void;
+  token: string;
 }
 
-export function ResetPasswordForm({
+export function ConfirmResetPasswordForm({
   resetMutation,
   onSuccess,
   onError,
   onMutate,
   onNavigateToLogin,
-}: ResetPasswordFormProps) {
+  token,
+}: ConfirmResetPasswordFormProps) {
   const router = useRouter();
-  const { form, message, isPending, handleSubmit } = useResetPassword({
+  const { form, message, isPending, handleSubmit } = useConfirmResetPassword({
     resetMutation,
     onSuccess,
     onError,
     onMutate,
+    onNavigateToLogin: () => {
+      console.log("ConfirmResetPasswordForm navigating to /login");
+      onNavigateToLogin?.() ?? router.navigate({ to: "/login" });
+    },
+    token,
   });
 
-  console.log("message:::", message);
+  useEffect(() => {
+    console.log("ConfirmResetPasswordForm message changed:", message);
+  }, [message]);
+
+  console.log("ConfirmResetPasswordForm render, message:", message);
 
   return (
     <div className="min-h-[100dvh] flex flex-col items-center p-1 sm:p-2 lg:p-3">
@@ -54,37 +69,37 @@ export function ResetPasswordForm({
           Reset your password
         </h1>
         <p className="text-muted-foreground text-center mb-6">
-          Enter your email to receive a password reset link
+          Enter your new password
         </p>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((data) => handleSubmit(data))}
-            data-testid="reset-password-form"
+            data-testid="confirm-reset-password-form"
             className="w-full"
           >
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="newPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <Label htmlFor="email" data-testid="email-label">
-                        Email
+                      <Label htmlFor="newPassword" data-testid="password-label">
+                        New Password
                       </Label>
                       <FormControl>
                         <Input
-                          id="email"
-                          type="email"
-                          placeholder="m@example.com"
+                          id="newPassword"
+                          type="password"
+                          placeholder="Enter new password"
                           required
-                          data-testid="email-input"
+                          data-testid="password-input"
                           disabled={isPending}
                           tabIndex={1}
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage data-testid="email-error" />
+                      <FormMessage data-testid="password-error" />
                     </FormItem>
                   )}
                 />
@@ -96,12 +111,12 @@ export function ResetPasswordForm({
                 disabled={isPending}
                 tabIndex={2}
               >
-                {isPending ? "Sending..." : "Send Reset Link"}
+                {isPending ? "Resetting..." : "Reset Password"}
               </Button>
               {message && (
                 <p
                   role="alert"
-                  data-testid="reset-password-message"
+                  data-testid="confirm-reset-password-message"
                   className={cn(
                     "text-sm text-center",
                     message.toLowerCase().includes("failed")
@@ -118,6 +133,7 @@ export function ResetPasswordForm({
                   role="link"
                   onClick={(e) => {
                     e.preventDefault();
+                    console.log("Back to login clicked");
                     onNavigateToLogin?.() ?? router.navigate({ to: "/login" });
                   }}
                   className="underline underline-offset-4"
