@@ -1,4 +1,3 @@
-// packages/ui/src/components/LoginForm.tsx
 import { cn } from "@/lib/utils";
 import {
   Form,
@@ -10,9 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useLogin, formSchema } from "../hooks/useLogin"; // Export formSchema
-
-export { formSchema }; // Add this export
+import { useLogin } from "../hooks/useLogin"; // Remove formSchema import
 
 export interface LoginResponse {
   id: string;

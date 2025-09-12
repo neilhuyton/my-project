@@ -30130,6 +30130,28 @@ async function sendVerificationEmail(to2, verificationToken, config2) {
   }
 }
 __name(sendVerificationEmail, "sendVerificationEmail");
+async function sendResetPasswordEmail(to2, resetToken, config2) {
+  const transporter = createTransporter(config2);
+  const resetUrl = `${config2.appUrl}/confirm-reset-password?token=${resetToken}`;
+  const mailOptions = {
+    from: config2.from,
+    to: to2,
+    subject: "Reset Your Password",
+    html: `
+      <h1>Password Reset Request</h1>
+      <p>You requested to reset your password. Click the link below to set a new password:</p>
+      <a href="${resetUrl}">Reset Password</a>
+      <p>This link will expire in 1 hour. If you didn\u2019t request a password reset, please ignore this email.</p>
+    `
+  };
+  try {
+    await transporter.sendMail(mailOptions);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+__name(sendResetPasswordEmail, "sendResetPasswordEmail");
 
 // src/router.ts
 var loginSchema = external_exports.object({
@@ -30229,6 +30251,49 @@ var appRouter = router({
       token: newAccessToken,
       refreshToken
     };
+  }),
+  resetPassword: router({
+    request: publicProcedure.input(
+      external_exports.object({
+        email: external_exports.string().email({ message: "Invalid email address" })
+      })
+    ).mutation(async ({ input, ctx }) => {
+      const { email } = input;
+      const user = await ctx.prisma.user.findUnique({
+        where: { email }
+      });
+      if (!user) {
+        return {
+          message: "If the email exists, a reset link has been sent."
+        };
+      }
+      const resetToken = crypto2.randomUUID();
+      const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1e3);
+      await ctx.prisma.user.update({
+        where: { email },
+        data: {
+          resetPasswordToken: resetToken,
+          resetPasswordTokenExpiresAt: resetTokenExpiresAt
+        }
+      });
+      const emailConfig = {
+        host: process.env.EMAIL_HOST,
+        port: Number(process.env.EMAIL_PORT),
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+        from: `${process.env.APP_NAME} <${process.env.EMAIL_FROM}>`,
+        appUrl: process.env[`VITE_APP_URL_${ctx.siteId.toUpperCase()}`] || "http://localhost:5173"
+      };
+      const emailResult = await sendResetPasswordEmail(
+        email,
+        resetToken,
+        emailConfig
+      );
+      if (!emailResult.success) {
+        console.error("Failed to send reset email:", emailResult.error);
+      }
+      return { message: "If the email exists, a reset link has been sent." };
+    })
   })
 });
 

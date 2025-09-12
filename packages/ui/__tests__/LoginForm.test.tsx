@@ -1,4 +1,3 @@
-// packages/ui/__tests__/LoginForm.test.tsx
 import {
   describe,
   it,
@@ -15,8 +14,9 @@ import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { server } from "../__mocks__/server";
 import { loginHandler } from "../__mocks__/handlers";
-import { LoginForm, formSchema } from "../src/components/LoginForm"; // Import formSchema
-import { z } from "zod"; // Add this import
+import { LoginForm } from "../src/components/LoginForm"; // Remove formSchema import
+import { formSchema as loginFormSchema } from "../src/hooks/useLogin"; // Import from hook
+import { z } from "zod";
 import {
   RouterProvider,
   createRouter,
@@ -47,7 +47,7 @@ describe("LoginForm Component", () => {
       path: "/login",
       component: () => (
         <LoginForm
-          loginMutation={async (data: z.infer<typeof formSchema>) => {
+          loginMutation={async (data: z.infer<typeof loginFormSchema>) => {
             const result = await trpcClient.login.mutate(data);
             return result;
           }}
@@ -123,7 +123,7 @@ describe("LoginForm Component", () => {
         router={testRouter}
         defaultComponent={() => (
           <LoginForm
-            loginMutation={async (data: z.infer<typeof formSchema>) => {
+            loginMutation={async (data: z.infer<typeof loginFormSchema>) => {
               const result = await trpcClient.login.mutate(data);
               return result;
             }}
@@ -206,7 +206,7 @@ describe("LoginForm Component", () => {
         router={testRouter}
         defaultComponent={() => (
           <LoginForm
-            loginMutation={async (data: z.infer<typeof formSchema>) => {
+            loginMutation={async (data: z.infer<typeof loginFormSchema>) => {
               const result = await trpcClient.login.mutate(data);
               return result;
             }}

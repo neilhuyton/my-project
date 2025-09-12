@@ -1,10 +1,12 @@
-// packages/auth/src/router.ts
 import { router, publicProcedure } from "./trpc";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { sendVerificationEmail } from "@my-project/email";
+import {
+  sendVerificationEmail,
+  sendResetPasswordEmail,
+} from "@my-project/email"; // Add sendResetPasswordEmail
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -139,6 +141,66 @@ export const appRouter = router({
         refreshToken,
       };
     }),
+
+  resetPassword: router({
+    request: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email({ message: "Invalid email address" }),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        const { email } = input;
+
+        const user = await ctx.prisma.user.findUnique({
+          where: { email },
+        });
+
+        // Always return success to avoid leaking user existence
+        if (!user) {
+          return {
+            message: "If the email exists, a reset link has been sent.",
+          };
+        }
+
+        const resetToken = crypto.randomUUID();
+        const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour expiry
+
+        await ctx.prisma.user.update({
+          where: { email },
+          data: {
+            resetPasswordToken: resetToken,
+            resetPasswordTokenExpiresAt: resetTokenExpiresAt,
+          },
+        });
+
+        // Construct EmailConfig
+        const emailConfig = {
+          host: process.env.EMAIL_HOST!,
+          port: Number(process.env.EMAIL_PORT),
+          user: process.env.EMAIL_USER!,
+          pass: process.env.EMAIL_PASS!,
+          from: `${process.env.APP_NAME} <${process.env.EMAIL_FROM}>`,
+          appUrl:
+            process.env[`VITE_APP_URL_${ctx.siteId.toUpperCase()}`] ||
+            "http://localhost:5173",
+        };
+
+        // Send reset email
+        const emailResult = await sendResetPasswordEmail(
+          email,
+          resetToken,
+          emailConfig
+        );
+
+        if (!emailResult.success) {
+          console.error("Failed to send reset email:", emailResult.error);
+          // Return success to avoid blocking the user
+        }
+
+        return { message: "If the email exists, a reset link has been sent." };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

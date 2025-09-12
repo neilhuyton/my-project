@@ -9,34 +9,29 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useRegister } from "../hooks/useRegister"; // Remove formSchema import
+import { useResetPassword } from "../hooks/useResetPassword";
 
-export interface RegisterResponse {
-  id: string;
-  email: string;
+export interface ResetPasswordResponse {
   message: string;
 }
 
-interface RegisterProps {
-  registerMutation: (data: {
-    email: string;
-    password: string;
-  }) => Promise<RegisterResponse>;
-  onSuccess?: (data: RegisterResponse) => void;
+interface ResetPasswordFormProps {
+  resetMutation: (data: { email: string }) => Promise<ResetPasswordResponse>;
+  onSuccess?: (data: ResetPasswordResponse) => void;
   onError?: (error: string) => void;
   onMutate?: () => void;
   onNavigateToLogin?: () => void;
 }
 
-export function Register({
-  registerMutation,
+export function ResetPasswordForm({
+  resetMutation,
   onSuccess,
   onError,
   onMutate,
   onNavigateToLogin,
-}: RegisterProps) {
-  const { form, message, isPending, handleSubmit } = useRegister({
-    registerMutation,
+}: ResetPasswordFormProps) {
+  const { form, message, isPending, handleSubmit } = useResetPassword({
+    resetMutation,
     onSuccess,
     onError,
     onMutate,
@@ -50,15 +45,15 @@ export function Register({
           role="heading"
           aria-level={1}
         >
-          Create an account
+          Reset your password
         </h1>
         <p className="text-muted-foreground text-center mb-6">
-          Enter your email below to create your account
+          Enter your email to receive a password reset link
         </p>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            data-testid="register-form"
+            data-testid="reset-password-form"
             className="w-full"
           >
             <div className="flex flex-col gap-6">
@@ -88,36 +83,9 @@ export function Register({
                   )}
                 />
               </div>
-              <div className="grid gap-3">
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label htmlFor="password" data-testid="password-label">
-                        Password
-                      </Label>
-                      <FormControl>
-                        <Input
-                          id="password"
-                          type="password"
-                          placeholder="Enter your password"
-                          required
-                          data-testid="password-input"
-                          disabled={isPending}
-                          className="w-full"
-                          tabIndex={2}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               {message && (
                 <p
-                  data-testid="register-message"
+                  data-testid="reset-password-message"
                   className={cn(
                     "text-sm text-center",
                     message.includes("failed")
@@ -131,26 +99,25 @@ export function Register({
               <Button
                 type="submit"
                 className="w-full mt-4"
-                data-testid="register-button"
+                data-testid="submit-button"
                 disabled={isPending}
-                tabIndex={3}
+                tabIndex={2}
               >
-                {isPending ? "Registering..." : "Register"}
+                {isPending ? "Sending..." : "Send Reset Link"}
               </Button>
               <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
                 <a
                   href="#"
                   role="link"
                   className="underline underline-offset-4"
-                  data-testid="login-link"
-                  tabIndex={4}
+                  data-testid="back-to-login-link"
+                  tabIndex={3}
                   onClick={(e) => {
                     e.preventDefault();
                     onNavigateToLogin?.();
                   }}
                 >
-                  Login
+                  Back to login
                 </a>
               </div>
             </div>
