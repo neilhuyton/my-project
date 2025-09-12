@@ -18,7 +18,7 @@ interface UserEmail {
   email: string;
 }
 
-export const appRouter = router({
+export const apiRouter = router({
   getUsers: publicProcedure.query(async ({ ctx }) => {
     const users: UserEmail[] = await ctx.prisma.user.findMany({
       select: { email: true },
@@ -254,4 +254,4 @@ export const appRouter = router({
   }),
 });
 
-export type AppRouter = typeof appRouter;
+export type ApiRouter = typeof apiRouter;

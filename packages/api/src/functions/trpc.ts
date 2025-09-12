@@ -1,5 +1,5 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { appRouter } from "../router";
+import { apiRouter } from "../router";
 import { HandlerEvent } from "@netlify/functions";
 import { PrismaClient } from "../../prisma/client";
 import { resolve } from "path";
@@ -78,7 +78,7 @@ export const handler = async (event: HandlerEvent) => {
         headers,
         body: event.httpMethod !== "GET" && event.body ? event.body : undefined,
       }),
-      router: appRouter,
+      router: apiRouter,
       createContext: () => ({
         siteId,
         prisma,
