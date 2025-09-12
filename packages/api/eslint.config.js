@@ -1,4 +1,4 @@
-// packages/auth/eslint.config.js
+// packages/api/eslint.config.js
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
@@ -6,7 +6,7 @@ export default tseslint.config(
   // Local ignores for this package's dist
   { ignores: ["dist"] },
 
-  // Extended ignores for auth-specific folders
+  // Extended ignores for api-specific folders
   { ignores: [".netlify/**", "prisma/**"] },
 
   // Explicit TS parser for Node-only files to fix parsing errors

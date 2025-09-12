@@ -7,7 +7,7 @@
     "build": "pnpm clean && pnpm --sequential -r build",
     "dev:site1": "pnpm --filter @my-project/ui build && pnpm --filter @my-project/site1 dev",
     "dev:site2": "pnpm --filter @my-project/ui build && pnpm --filter @my-project/site2 dev",
-    "auth:start": "pnpm --filter @my-project/auth start",
+    "api:start": "pnpm --filter @my-project/api start",
     "prisma:site1": "pnpm --filter @my-project/site1 prisma",
     "prisma:site2": "pnpm --filter @my-project/site2 prisma",
     "prisma:migrate:site1": "pnpm --filter @my-project/site1 prisma:migrate",

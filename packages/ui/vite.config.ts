@@ -20,7 +20,7 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
       "@/components": resolve(__dirname, "./src/components"),
       "@/lib": resolve(__dirname, "./src/lib"),
-      "@my-project/auth": resolve(__dirname, "../auth/src"),
+      "@my-project/api": resolve(__dirname, "../api/src"),
     },
   },
   build: {
@@ -35,7 +35,7 @@ export default defineConfig({
         "react",
         "react-dom",
         "@hookform/resolvers",
-        "@my-project/auth",
+        "@my-project/api",
         "@radix-ui/react-label",
         "@radix-ui/react-slot",
         "@tanstack/react-query",

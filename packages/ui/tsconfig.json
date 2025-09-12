@@ -10,7 +10,7 @@
       "@/*": ["src/*"],
       "@/components/*": ["src/components/*"],
       "@/lib/*": ["src/lib/*"],
-      "@my-project/auth": ["../../auth/src"]
+      "@my-project/api": ["../../api/src"]
     },
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "declaration": true,

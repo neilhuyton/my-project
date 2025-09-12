@@ -71,7 +71,7 @@ export const loginRoute = createRoute({
       <LoginForm
         loginMutation={async (data) => {
           const result = await trpcClient.login.mutate(data);
-          login(result.id, result.token, result.refreshToken); // Update auth store
+          login(result.id, result.token, result.refreshToken);
           return result;
         }}
         onSuccess={() => navigate({ to: "/weight" })}

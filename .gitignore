@@ -4,7 +4,7 @@ node_modules/
 .pnpm-debug.log
 packages/*/dist/
 .netlify/
-!packages/auth/dist/functions/trpc.js
+!packages/api/dist/functions/trpc.js
 
 **/vite.config.d.ts
 **/vite.config.d.ts.map

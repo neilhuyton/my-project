@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter @my-project/auth build && pnpm --filter @my-project/ui build && sh -c 'DATABASE_URL=$DATABASE_URL_SITE1 tsc -p tsconfig.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo && mkdir -p .netlify/functions-internal && cp ../auth/dist/functions/trpc.js .netlify/functions-internal/trpc.js'",
+    "build": "pnpm --filter @my-project/api build && pnpm --filter @my-project/ui build && sh -c 'DATABASE_URL=$DATABASE_URL_SITE1 tsc -p tsconfig.json --noEmitOnError false && vite build && rm -f *.tsbuildinfo && mkdir -p .netlify/functions-internal && cp ../api/dist/functions/trpc.js .netlify/functions-internal/trpc.js'",
     "dev": "vite",
     "start": "vite --host",
     "lint": "eslint . --ext .ts,.tsx",
     "prisma": "sh -c 'PRISMA_CLI_BINARY_TARGETS=rhel-openssl-3.0.x,rhel-openssl-1.0.x PRISMA_LOG_QUERIES=true DATABASE_URL=$DATABASE_URL_SITE1 npx prisma generate --schema=prisma/schema.prisma && ls -l node_modules/.prisma/client/ || echo \"No binary in site1\"'"
   },
   "dependencies": {
-    "@my-project/auth": "workspace:*",
+    "@my-project/api": "workspace:*",
     "@my-project/ui": "workspace:*",
     "@prisma/client": "5.22.0",
     "@tanstack/react-query": "^5.59.15",

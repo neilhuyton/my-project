@@ -17,7 +17,7 @@ export default tseslint.config(
       globals: {
         ...globals.es2021,
         ...globals.browser, // Common for UI/site packages
-        ...globals.node, // Common for auth/server packages
+        ...globals.node, // Common for api/server packages
       },
     },
     plugins: {
