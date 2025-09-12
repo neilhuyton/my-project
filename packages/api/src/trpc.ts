@@ -4,6 +4,8 @@ import type { PrismaClient } from "../prisma/client";
 export type Context = {
   siteId: string;
   prisma: PrismaClient;
+  userId?: string;
+  email?: string;
 };
 
 const t = initTRPC.context<Context>().create();
