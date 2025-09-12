@@ -14,10 +14,7 @@ const loginRoute = createRoute({
   path: "/login",
   component: () => (
     <LoginForm
-      loginMutation={(data) => {
-        console.log("LoginForm mutation called with:", data);
-        return trpcClient.login.mutate(data);
-      }}
+      loginMutation={(data) => trpcClient.login.mutate(data)}
       onSuccess={() => (window.location.href = "/weight")}
       onNavigateToResetPassword={() =>
         (window.location.href = "/reset-password")
@@ -32,10 +29,7 @@ const registerRoute = createRoute({
   path: "/register",
   component: () => (
     <Register
-      registerMutation={(data) => {
-        console.log("Register mutation called with:", data);
-        return trpcClient.register.mutate(data);
-      }}
+      registerMutation={(data) => trpcClient.register.mutate(data)}
       onNavigateToLogin={() => (window.location.href = "/login")}
     />
   ),
@@ -46,15 +40,9 @@ const resetPasswordRoute = createRoute({
   path: "/reset-password",
   component: () => (
     <ResetPasswordForm
-      key={Date.now()} // Force re-render on mount
-      resetMutation={(data) => {
-        console.log("ResetPasswordForm mutation called with:", data);
-        return trpcClient.resetPassword.request.mutate(data);
-      }}
+      key={Date.now()}
+      resetMutation={(data) => trpcClient.resetPassword.request.mutate(data)}
       onNavigateToLogin={() => (window.location.href = "/login")}
-      onSuccess={(data) => console.log("ResetPasswordForm onSuccess:", data)}
-      onError={(error) => console.log("ResetPasswordForm onError:", error)}
-      onMutate={() => console.log("ResetPasswordForm onMutate")}
     />
   ),
 });
@@ -66,19 +54,14 @@ const confirmResetPasswordRoute = createRoute({
     const { token } = confirmResetPasswordRoute.useSearch({
       select: (search: { token?: string }) => ({ token: search.token || "" }),
     });
-    console.log("ConfirmResetPasswordRoute token from query:", token);
     if (!token) {
-      console.log("No token provided in query, redirecting to /login");
       window.location.href = "/login";
       return null;
     }
     return (
       <ConfirmResetPasswordForm
         token={token}
-        resetMutation={(data) => {
-          console.log("ConfirmResetPasswordForm mutation called with:", data);
-          return trpcClient.resetPassword.confirm.mutate(data);
-        }}
+        resetMutation={(data) => trpcClient.resetPassword.confirm.mutate(data)}
         onNavigateToLogin={() => (window.location.href = "/login")}
       />
     );

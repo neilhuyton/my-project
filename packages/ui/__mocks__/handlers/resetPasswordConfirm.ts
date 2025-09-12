@@ -16,7 +16,6 @@ export const resetPasswordConfirmHandler = http.post(
     let body;
     try {
       const text = await request.text();
-      console.log("ResetPasswordConfirm request body:", text);
       body = text ? JSON.parse(text) : {};
     } catch {
       return createTRPCErrorResponse(
@@ -29,13 +28,8 @@ export const resetPasswordConfirmHandler = http.post(
     }
 
     const input = body.input ? body.input : body;
-    console.log("ResetPasswordConfirm input:", input);
     const result = confirmResetPasswordInputSchema.safeParse(input);
     if (!result.success) {
-      console.log(
-        "ResetPasswordConfirm validation error:",
-        result.error.errors
-      );
       return createTRPCErrorResponse(
         0,
         result.error.errors[0].message,

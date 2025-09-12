@@ -14,8 +14,8 @@ import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { server } from "../__mocks__/server";
 import { registerHandler } from "../__mocks__/handlers";
-import { Register } from "../src/components/Register"; // Remove formSchema import
-import { formSchema as registerFormSchema } from "../src/hooks/useRegister"; // Import from hook
+import { Register } from "../src/components/Register";
+import { formSchema as registerFormSchema } from "../src/hooks/useRegister";
 import { z } from "zod";
 import {
   RouterProvider,
@@ -38,7 +38,6 @@ describe("Register Component", () => {
           registerMutation={async (
             data: z.infer<typeof registerFormSchema>
           ) => {
-            console.log("Register mutation data:", data); // Debug
             const result = await trpcClient.register.mutate(data);
             return result;
           }}
@@ -105,7 +104,6 @@ describe("Register Component", () => {
             registerMutation={async (
               data: z.infer<typeof registerFormSchema>
             ) => {
-              console.log("Register mutation data:", data); // Debug
               const result = await trpcClient.register.mutate(data);
               return result;
             }}

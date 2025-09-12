@@ -15,7 +15,6 @@ import {
 } from "../hooks/useConfirmResetPassword";
 import { useRouter } from "@tanstack/react-router";
 import { Logo } from "./Logo";
-import { useEffect } from "react";
 
 interface ConfirmResetPasswordFormProps {
   resetMutation: (
@@ -43,17 +42,10 @@ export function ConfirmResetPasswordForm({
     onError,
     onMutate,
     onNavigateToLogin: () => {
-      console.log("ConfirmResetPasswordForm navigating to /login");
       onNavigateToLogin?.() ?? router.navigate({ to: "/login" });
     },
     token,
   });
-
-  useEffect(() => {
-    console.log("ConfirmResetPasswordForm message changed:", message);
-  }, [message]);
-
-  console.log("ConfirmResetPasswordForm render, message:", message);
 
   return (
     <div className="min-h-[100dvh] flex flex-col items-center p-1 sm:p-2 lg:p-3">
@@ -133,7 +125,6 @@ export function ConfirmResetPasswordForm({
                   role="link"
                   onClick={(e) => {
                     e.preventDefault();
-                    console.log("Back to login clicked");
                     onNavigateToLogin?.() ?? router.navigate({ to: "/login" });
                   }}
                   className="underline underline-offset-4"

@@ -7,12 +7,6 @@ export const trpc = createTRPCReact<AppRouter>();
 
 export const queryClient = new QueryClient();
 
-console.log(
-  "Initializing tRPC client with URL:",
-  import.meta.env.VITE_TRPC_URL ||
-    "http://localhost:8888/.netlify/functions/trpc"
-);
-
 export const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
@@ -20,7 +14,6 @@ export const trpcClient = trpc.createClient({
         import.meta.env.VITE_TRPC_URL ||
         "http://localhost:8888/.netlify/functions/trpc",
       headers: () => {
-        console.log("tRPC headers:", { "x-site-id": "site1" });
         return { "x-site-id": "site1" };
       },
     }),

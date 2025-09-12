@@ -38,8 +38,6 @@ export function ResetPasswordForm({
     onMutate,
   });
 
-  console.log("message:::", message);
-
   return (
     <div className="min-h-[100dvh] flex flex-col items-center p-1 sm:p-2 lg:p-3">
       <div className="pt-14">

@@ -12,7 +12,6 @@ export const resetPasswordRequestHandler = http.post(
   "http://localhost:8888/.netlify/functions/trpc/resetPassword.request",
   async ({ request }) => {
     const body = await request.json().catch(() => ({}));
-    console.log("ResetPassword input:", body);
 
     const input =
       typeof body === "object" && body !== null && "input" in body
@@ -21,7 +20,6 @@ export const resetPasswordRequestHandler = http.post(
 
     const result = resetPasswordInputSchema.safeParse(input);
     if (!result.success) {
-      console.log("ResetPassword validation error:", result.error.errors);
       return createTRPCErrorResponse(
         0,
         result.error.errors[0].message,
@@ -41,9 +39,6 @@ export const resetPasswordRequestHandler = http.post(
       user.resetPasswordTokenExpiresAt = new Date(
         Date.now() + 60 * 60 * 1000
       ).toISOString();
-      console.log(
-        `Generated reset link for ${email}: http://localhost:5173/confirm-reset-password?token=${resetToken}`
-      );
     }
 
     return HttpResponse.json({
@@ -62,7 +57,6 @@ export const resetPasswordRequestHandler = http.post(
 export const resetPasswordRequestFailureHandler = http.post(
   "http://localhost:8888/.netlify/functions/trpc/resetPassword.request",
   () => {
-    console.log("Handling resetPassword.request failure");
     return createTRPCErrorResponse(
       0,
       "Failed to send reset email",

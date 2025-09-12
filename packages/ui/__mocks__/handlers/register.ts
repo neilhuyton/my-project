@@ -18,7 +18,6 @@ export const registerHandler = http.post(
     let body;
     try {
       const text = await request.text();
-      console.log("Register request body:", text); // Debug
       body = text ? JSON.parse(text) : {};
     } catch {
       return createTRPCErrorResponse(
@@ -31,10 +30,8 @@ export const registerHandler = http.post(
     }
 
     const input = body.input ? body.input : body;
-    console.log("Register input:", input); // Debug
     const result = registerInputSchema.safeParse(input);
     if (!result.success) {
-      console.log("Register validation error:", result.error.errors); // Debug
       return new HttpResponse(
         JSON.stringify({
           id: 0,

@@ -127,12 +127,10 @@ describe("ResetPasswordForm Component", { timeout: 10000 }, () => {
     const emailInput = screen.getByTestId("email-input");
 
     await userEvent.type(emailInput, "testuser@example.com", { delay: 1 });
-    console.log("Dispatching form submit event");
     await form.dispatchEvent(new Event("submit", { bubbles: true }));
 
     await waitFor(
       () => {
-        console.log("Checking mockOnMutate");
         expect(mockOnMutate).toHaveBeenCalled();
       },
       { timeout: 1000, interval: 100 }
@@ -140,7 +138,6 @@ describe("ResetPasswordForm Component", { timeout: 10000 }, () => {
 
     await waitFor(
       () => {
-        console.log("Checking mockOnSuccess and message");
         expect(mockOnSuccess).toHaveBeenCalledWith({
           message: "If the email exists, a reset link has been sent.",
           token: expect.any(String),
@@ -151,15 +148,7 @@ describe("ResetPasswordForm Component", { timeout: 10000 }, () => {
         );
         expect(messageElement).toHaveClass("text-green-500");
       },
-      {
-        timeout: 2000,
-        interval: 100,
-        onTimeout: (error: Error) => {
-          console.log("waitFor timeout, dumping DOM");
-          screen.debug();
-          return error;
-        },
-      }
+      { timeout: 2000, interval: 100 }
     );
   });
 

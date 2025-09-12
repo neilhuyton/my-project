@@ -2,9 +2,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { formSchema } from "./useLogin"; // Reuse login schema
+import { formSchema } from "./useLogin";
 
-export { formSchema }; // Export formSchema
+export { formSchema };
 
 export interface RegisterResponse {
   id: string;
@@ -44,10 +44,8 @@ export const useRegister = ({
   });
 
   const handleSubmit = async (data: FormValues) => {
-    console.log("Register handleSubmit:::", data); // Debug
     const isValid = await form.trigger();
     if (!isValid) {
-      console.log("Form validation failed:", form.formState.errors); // Debug
       return;
     }
 

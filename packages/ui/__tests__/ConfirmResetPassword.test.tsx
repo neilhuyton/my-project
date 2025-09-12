@@ -36,23 +36,20 @@ describe("ConfirmResetPasswordForm Component", { timeout: 20000 }, () => {
       path: "/confirm-reset-password",
       component: () => {
         const { token } = resetPasswordConfirmRoute.useSearch({
-          select: (search: { token?: string }) => ({ token: search.token || "" }),
+          select: (search: { token?: string }) => ({
+            token: search.token || "",
+          }),
         });
-        console.log("ConfirmResetPasswordRoute token from query:", token);
         return (
           <ConfirmResetPasswordForm
             token={token}
-            resetMutation={(data) => {
-              console.log("ConfirmResetPassword mutation data:", data);
-              return trpcClient.resetPassword.confirm.mutate(data);
-            }}
+            resetMutation={(data) =>
+              trpcClient.resetPassword.confirm.mutate(data)
+            }
             onSuccess={mockOnSuccess}
             onError={mockOnError}
             onMutate={mockOnMutate}
-            onNavigateToLogin={() => {
-              console.log("Navigating to /login");
-              testRouter.history.push("/login");
-            }}
+            onNavigateToLogin={() => testRouter.history.push("/login")}
           />
         );
       },
@@ -154,13 +151,11 @@ describe("ConfirmResetPasswordForm Component", { timeout: 20000 }, () => {
       await userEvent.type(passwordInput, "newSecurePassword123", {
         delay: 10,
       });
-      console.log("Dispatching form submit event");
       await form.dispatchEvent(new Event("submit", { bubbles: true }));
     });
 
     await waitFor(
       () => {
-        console.log("Checking mockOnMutate");
         expect(mockOnMutate).toHaveBeenCalled();
       },
       { timeout: 2000, interval: 50 }
@@ -168,7 +163,6 @@ describe("ConfirmResetPasswordForm Component", { timeout: 20000 }, () => {
 
     await waitFor(
       () => {
-        console.log("Checking mockOnSuccess and message");
         expect(mockOnSuccess).toHaveBeenCalledWith({
           message: "Password reset successfully",
         });
@@ -179,31 +173,14 @@ describe("ConfirmResetPasswordForm Component", { timeout: 20000 }, () => {
           screen.getByTestId("confirm-reset-password-message")
         ).toHaveClass("text-green-500");
       },
-      {
-        timeout: 5000,
-        interval: 50,
-        onTimeout: (error: Error) => {
-          console.log("waitFor timeout for message, dumping DOM");
-          screen.debug();
-          return error;
-        },
-      }
+      { timeout: 5000, interval: 50 }
     );
 
     await waitFor(
       () => {
-        console.log("Checking navigation");
         expect(history.location.pathname).toBe("/login");
       },
-      {
-        timeout: 2000,
-        interval: 50,
-        onTimeout: (error: Error) => {
-          console.log("waitFor timeout for navigation, dumping DOM");
-          screen.debug();
-          return error;
-        },
-      }
+      { timeout: 2000, interval: 50 }
     );
   });
 
@@ -224,7 +201,6 @@ describe("ConfirmResetPasswordForm Component", { timeout: 20000 }, () => {
 
     await act(async () => {
       await userEvent.type(passwordInput, "short", { delay: 10 });
-      console.log("Dispatching form submit event");
       await form.dispatchEvent(new Event("submit", { bubbles: true }));
     });
 
@@ -260,7 +236,6 @@ describe("ConfirmResetPasswordForm Component", { timeout: 20000 }, () => {
       await userEvent.type(passwordInput, "newSecurePassword123", {
         delay: 10,
       });
-      console.log("Dispatching form submit event");
       await form.dispatchEvent(new Event("submit", { bubbles: true }));
     });
 
@@ -296,7 +271,6 @@ describe("ConfirmResetPasswordForm Component", { timeout: 20000 }, () => {
     const backToLoginLink = screen.getByTestId("back-to-login-link");
 
     await act(async () => {
-      console.log("Clicking back to login link");
       await userEvent.click(backToLoginLink);
     });
 
