@@ -9,7 +9,7 @@ export const handler = async (event: HandlerEvent) => {
     "Access-Control-Allow-Origin":
       event.headers.origin || "http://localhost:5173",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, x-site-id",
+    "Access-Control-Allow-Headers": "Content-Type, x-site-id, Authorization",
     "Access-Control-Allow-Credentials": "true",
   };
 

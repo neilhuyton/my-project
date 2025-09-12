@@ -6,6 +6,21 @@ import { RouterProvider } from "@tanstack/react-router";
 import { router } from "./router";
 import "@my-project/ui/index.css";
 
+// Root component to wrap providers
+const Root = ({
+  queryClient,
+  trpcClient,
+}: {
+  queryClient: any;
+  trpcClient: any;
+}) => (
+  <QueryClientProvider client={queryClient}>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <RouterProvider router={router} />
+    </trpc.Provider>
+  </QueryClientProvider>
+);
+
 class ErrorBoundary extends Component<
   { children: React.ReactNode },
   { hasError: boolean; error: string | null }
@@ -36,11 +51,7 @@ class ErrorBoundary extends Component<
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
-          <RouterProvider router={router} />
-        </trpc.Provider>
-      </QueryClientProvider>
+      <Root queryClient={queryClient} trpcClient={trpcClient} />
     </ErrorBoundary>
   </React.StrictMode>
 );
