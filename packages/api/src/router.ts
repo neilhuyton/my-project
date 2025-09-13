@@ -6,7 +6,13 @@ import { refreshProcedure } from "./procedures/auth/refresh";
 import { resetPasswordRouter } from "./procedures/auth/resetPassword";
 import { verifyEmailProcedure } from "./procedures/auth/verifyEmail";
 import { weightRouter } from "./procedures/weight";
-import type { WeightInput, WeightResponse, GoalResponse } from "./types";
+import type {
+  WeightInput,
+  WeightResponse,
+  GoalInput,
+  UpdateGoalInput,
+  GoalResponse,
+} from "./types";
 
 export const apiRouter = router({
   login: loginProcedure,
@@ -18,4 +24,10 @@ export const apiRouter = router({
 });
 
 export type ApiRouter = typeof apiRouter;
-export type { WeightInput, WeightResponse, GoalResponse };
+export type {
+  WeightInput,
+  WeightResponse,
+  GoalInput,
+  UpdateGoalInput,
+  GoalResponse,
+};
