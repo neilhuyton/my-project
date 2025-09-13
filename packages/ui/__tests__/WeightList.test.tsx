@@ -42,7 +42,6 @@ describe("WeightList Component", { timeout: 10000 }, () => {
       path: "/weight",
       component: () => (
         <WeightList
-          getWeightsQuery={() => trpcClient.weight.getWeights.query()}
           deleteWeightMutation={(data) => trpcClient.weight.delete.mutate(data)}
           onSuccess={mockOnSuccess}
           onError={mockOnError}

@@ -6,6 +6,7 @@ import {
   ConfirmResetPasswordForm,
   WeightForm,
 } from "@my-project/ui";
+import Weight from "../pages/Weight"; // Added import
 import {
   createRootRoute,
   createRoute,
@@ -144,32 +145,7 @@ export const weightRoute = createRoute({
       return; // Allow trpcClient to attempt refresh
     }
   },
-  component: () => {
-    const navigate = useNavigate();
-    const weightMutation = async (data: WeightInput) => {
-      try {
-        const result = await trpcClient.weight.create.mutate(data);
-        return result;
-      } catch (error: unknown) {
-        if (error instanceof Error && error.message.includes("UNAUTHORIZED")) {
-          navigate({ to: "/login" });
-        }
-        throw error;
-      }
-    };
-
-    return (
-      <WeightForm
-        weightMutation={weightMutation}
-        currentGoal={{
-          id: "1",
-          goalWeightKg: 65,
-          goalSetAt: "2025-09-12T00:00:00Z",
-          reachedAt: null,
-        }}
-      />
-    );
-  },
+  component: Weight, // Use Weight component instead of WeightForm
 });
 
 const routeTree = rootRoute.addChildren([

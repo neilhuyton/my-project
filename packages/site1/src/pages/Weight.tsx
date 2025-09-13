@@ -1,17 +1,14 @@
 // packages/site1/src/pages/Weight.tsx
-import { trpc, queryClient } from "../trpc";
-import { WeightForm, LoadingSpinner } from "@my-project/ui";
+import { trpc, trpcClient } from "../trpc";
+import { WeightForm, LoadingSpinner, WeightList } from "@my-project/ui";
 import { useNavigate } from "@tanstack/react-router";
-import type {
-  WeightInput,
-  WeightResponse,
-  GoalResponse,
-} from "@my-project/api";
+import type { WeightInput } from "@my-project/api";
 
 type WeightMutationError = { message: string };
 
 function Weight() {
   const navigate = useNavigate();
+  const utils = trpc.useUtils();
   const {
     data: currentGoal,
     error: goalError,
@@ -19,8 +16,20 @@ function Weight() {
   } = trpc.weight.getCurrentGoal.useQuery();
 
   const mutation = trpc.weight.create.useMutation({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["weight.getCurrentGoal"] });
+    onSuccess: async () => {
+      await utils.weight.getCurrentGoal.invalidate();
+      await utils.weight.getWeights.invalidate();
+    },
+    onError: (error: WeightMutationError) => {
+      if (error.message.includes("UNAUTHORIZED")) {
+        navigate({ to: "/login" });
+      }
+    },
+  });
+
+  const deleteMutation = trpc.weight.delete.useMutation({
+    onSuccess: async () => {
+      await utils.weight.getWeights.invalidate();
     },
     onError: (error: WeightMutationError) => {
       if (error.message.includes("UNAUTHORIZED")) {
@@ -65,7 +74,14 @@ function Weight() {
         weightMutation={(data: WeightInput) => mutation.mutateAsync(data)}
         currentGoal={currentGoal ?? null}
       />
-      {/* <WeightList /> */}
+      <WeightList
+        deleteWeightMutation={(data) => deleteMutation.mutateAsync(data)}
+        onError={(error) => {
+          if (error.includes("UNAUTHORIZED")) {
+            navigate({ to: "/login" });
+          }
+        }}
+      />
     </div>
   );
 }

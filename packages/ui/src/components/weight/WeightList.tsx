@@ -15,7 +15,6 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import type { WeightResponse } from "@/hooks/useWeightForm";
 
 interface WeightListProps {
-  getWeightsQuery: () => Promise<WeightResponse[]>;
   deleteWeightMutation: (data: { weightId: string }) => Promise<{ id: string }>;
   onSuccess?: (data: { id: string }) => void;
   onError?: (error: string) => void;
@@ -23,7 +22,6 @@ interface WeightListProps {
 }
 
 export function WeightList({
-  getWeightsQuery,
   deleteWeightMutation,
   onSuccess,
   onError,
@@ -38,7 +36,6 @@ export function WeightList({
     handleDelete,
     isDeleting,
   } = useWeightList({
-    getWeightsQuery,
     deleteWeightMutation,
     onSuccess,
     onError,

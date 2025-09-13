@@ -1,3 +1,4 @@
+// packages/site1/src/main.tsx
 import React, { Component, ErrorInfo } from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClientProvider } from "@tanstack/react-query";

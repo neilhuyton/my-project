@@ -1,13 +1,16 @@
+// packages/ui/src/index.tsx
 import "./index.css";
 export * from "./components/ui/form";
 export * from "./components/ui/input";
 export * from "./components/ui/button";
 export * from "./components/ui/label";
+export * from "./components/ui/table"; // Added for WeightList table components
 export { LoginForm } from "./components/LoginForm";
 export { Register } from "./components/Register";
 export { ResetPasswordForm } from "./components/ResetPasswordForm";
 export { ConfirmResetPasswordForm } from "./components/ConfirmResetPasswordForm";
 export { WeightForm } from "./components/weight/WeightForm";
+export { WeightList } from "./components/weight/WeightList"; // Added
 export { LoadingSpinner } from "./components/LoadingSpinner";
 export { useLogin, formSchema as loginFormSchema } from "./hooks/useLogin";
 export type { LoginResponse } from "./hooks/useLogin";

@@ -4,10 +4,9 @@ import { format } from "date-fns";
 import { trpc } from "@/trpc";
 import type { WeightResponse } from "@/hooks/useWeightForm";
 import type { TRPCClientErrorLike } from "@trpc/client";
-import type { ApiRouter } from "@my-project/api"; // Changed from AppRouter to ApiRouter
+import type { ApiRouter } from "@my-project/api";
 
 interface UseWeightListProps {
-  getWeightsQuery: () => Promise<WeightResponse[]>;
   deleteWeightMutation: (data: { weightId: string }) => Promise<{ id: string }>;
   onSuccess?: (data: { id: string }) => void;
   onError?: (error: string) => void;
@@ -25,7 +24,6 @@ interface UseWeightListReturn {
 }
 
 export const useWeightList = ({
-  getWeightsQuery,
   deleteWeightMutation,
   onSuccess,
   onError,
@@ -40,8 +38,9 @@ export const useWeightList = ({
     isError,
     error,
   } = trpc.weight.getWeights.useQuery(undefined, {
-    queryFn: getWeightsQuery,
     retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
   });
 
   const utils = trpc.useUtils();
@@ -69,7 +68,9 @@ export const useWeightList = ({
     mutation.mutate(
       { weightId },
       {
-        onSettled: () => setIsDeleting(false),
+        onSettled: () => {
+          setIsDeleting(false);
+        },
       }
     );
   };
