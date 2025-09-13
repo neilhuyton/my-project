@@ -1,4 +1,4 @@
-// __mocks__/utils.ts
+// packages/ui/__mocks__/utils.ts
 import { HttpResponse } from "msw";
 import { z } from "zod";
 import * as jwt from "jsonwebtoken";
@@ -20,7 +20,6 @@ export async function parseBody<T>(
     const parsed = JSON.parse(rawBody);
     return schema.parse(parsed);
   } catch (error) {
-    console.error(`Failed to parse body for ${procedure}:`, error);
     throw new Error(
       `Invalid request body for ${procedure}: ${
         error instanceof Error ? error.message : "Malformed JSON"
@@ -69,7 +68,6 @@ export function verifyJWT(token: string): { userId: string } | null {
       userId: string;
     };
   } catch {
-    console.error("JWT verification failed for token:", token);
     return null;
   }
 }
@@ -77,7 +75,7 @@ export function verifyJWT(token: string): { userId: string } | null {
 export function withBodyParsing<T>(
   schema: z.ZodType<T>,
   procedure: string,
-  handler: (body: T, request: Request) => Promise<Response>,
+  handler: (body: T, request: Request) => Promise<Response>
 ) {
   return async ({ request }: { request: Request }): Promise<Response> => {
     let body: T;
@@ -88,7 +86,6 @@ export function withBodyParsing<T>(
         error instanceof Error
           ? error.message
           : "Unknown error parsing request body";
-      console.error(message);
       return createTRPCErrorResponse(0, message, -32600, 400, procedure);
     }
     return handler(body, request);
@@ -101,7 +98,6 @@ export function authenticateRequest(
 ): AuthenticatedUser | Response {
   const authHeader = request.headers.get("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    console.error(`Missing or invalid Authorization header for ${procedure}`);
     return createTRPCErrorResponse(
       0,
       "Unauthorized: User must be logged in",
@@ -114,7 +110,6 @@ export function authenticateRequest(
   const token = authHeader.split(" ")[1];
   const decoded = verifyJWT(token);
   if (!decoded) {
-    console.error(`Invalid token for ${procedure}`);
     return createTRPCErrorResponse(0, "Invalid token", -32001, 401, procedure);
   }
 
