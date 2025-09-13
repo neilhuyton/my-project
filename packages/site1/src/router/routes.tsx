@@ -10,6 +10,7 @@ import {
 import Weight from "../pages/Weight";
 import Goals from "../pages/Goals";
 import Stats from "../pages/Stats";
+import Profile from "../pages/Profile"; // Import the Profile component
 import Root from "../Root";
 import {
   createRootRoute,
@@ -52,7 +53,7 @@ const rootRoute = createRootRoute({
       An error occurred. Please try again. {JSON.stringify(props.error)}
     </div>
   ),
-  component: Root, // Use Root without props
+  component: Root,
 });
 
 export const homeRoute = createRoute({
@@ -171,6 +172,17 @@ export const statsRoute = createRoute({
   component: Stats,
 });
 
+export const profileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/profile",
+  beforeLoad: () => {
+    if (!checkAuth()) {
+      return;
+    }
+  },
+  component: Profile,
+});
+
 const routeTree = rootRoute.addChildren([
   homeRoute,
   loginRoute,
@@ -180,6 +192,7 @@ const routeTree = rootRoute.addChildren([
   weightRoute,
   goalsRoute,
   statsRoute,
+  profileRoute, // Add the Profile route
 ]);
 
 export { routeTree };

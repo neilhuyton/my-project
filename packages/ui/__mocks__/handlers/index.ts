@@ -14,6 +14,7 @@ import { weightDeleteHandler } from "./weightDelete";
 import { weightSetGoalHandler } from "./weightSetGoal";
 import { weightUpdateGoalHandler } from "./weightUpdateGoal";
 import { weightGetGoalsHandler } from "./weightGetGoals";
+import { emailUpdateHandler } from "./emailUpdate";
 
 export const debugHandler = http.all("*", () => {
   return HttpResponse.json({ error: "Unhandled request" }, { status: 404 });
@@ -33,6 +34,7 @@ export const handlers = [
   weightUpdateGoalHandler,
   debugHandler,
   weightGetGoalsHandler,
+  emailUpdateHandler,
 ];
 
 export {
@@ -48,4 +50,5 @@ export {
   weightSetGoalHandler,
   weightUpdateGoalHandler,
   weightGetGoalsHandler,
+  emailUpdateHandler,
 };

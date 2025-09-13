@@ -15,7 +15,8 @@ export { GoalForm } from "./components/weight/GoalForm";
 export { GoalList } from "./components/weight/GoalList";
 export { LoadingSpinner } from "./components/LoadingSpinner";
 export { default as Navigation } from "./components/Navigation";
-export { default as ProfileIcon } from "./components/ProfileIcon"; // Add this line
+export { default as ProfileIcon } from "./components/ProfileIcon";
+export { default as EmailUpdateForm } from "./components/EmailUpdateForm";
 export { useLogin, formSchema as loginFormSchema } from "./hooks/useLogin";
 export type { LoginResponse } from "./hooks/useLogin";
 export {
@@ -35,3 +36,5 @@ export {
 export type { FormValues as ConfirmResetPasswordFormValues } from "./hooks/useConfirmResetPassword";
 export { useWeightGoal } from "./hooks/useWeightGoal";
 export { useGoalList } from "./hooks/useGoalList";
+export { useProfile, emailFormSchema } from "./hooks/useProfile";
+export type { EmailFormValues, EmailUpdateResponse } from "./hooks/useProfile";
