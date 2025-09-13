@@ -1,3 +1,4 @@
+// packages/site1/src/pages/Weight.tsx
 import { trpc, queryClient } from "../trpc";
 import { WeightForm, LoadingSpinner } from "@my-project/ui";
 import { useNavigate } from "@tanstack/react-router";
@@ -18,14 +19,10 @@ function Weight() {
   } = trpc.weight.getCurrentGoal.useQuery();
 
   const mutation = trpc.weight.create.useMutation({
-    onMutate: () => {
-      console.log("Submitting weight...");
-    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["weight.getCurrentGoal"] });
     },
     onError: (error: WeightMutationError) => {
-      console.error("Weight submission error:", error);
       if (error.message.includes("UNAUTHORIZED")) {
         navigate({ to: "/login" });
       }
@@ -67,15 +64,6 @@ function Weight() {
       <WeightForm
         weightMutation={(data: WeightInput) => mutation.mutateAsync(data)}
         currentGoal={currentGoal ?? null}
-        onSuccess={(data: WeightResponse) => {
-          console.log("Weight recorded:", data);
-        }}
-        onError={(error: string) => {
-          console.error("Weight form error:", error);
-        }}
-        onMutate={() => {
-          console.log("Submitting weight...");
-        }}
       />
       {/* <WeightList /> */}
     </div>

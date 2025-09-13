@@ -1,3 +1,4 @@
+// packages/api/src/procedures/weight/create.ts
 import { publicProcedure } from "../../trpc";
 import { z } from "zod";
 import type { Context } from "../../trpc";
@@ -30,11 +31,6 @@ export const weightCreateProcedure = publicProcedure
       input: z.infer<typeof weightInputSchema>;
       ctx: Context;
     }) => {
-      console.log("weightCreateProcedure - Context:", {
-        userId: ctx.userId,
-        siteId: ctx.siteId,
-      });
-      console.log("weightCreateProcedure - Input:", input);
       if (!ctx.userId) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
