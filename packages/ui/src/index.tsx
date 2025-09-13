@@ -1,4 +1,3 @@
-// packages/ui/src/index.tsx
 import "./index.css";
 export * from "./components/ui/form";
 export * from "./components/ui/input";
@@ -11,7 +10,8 @@ export { ResetPasswordForm } from "./components/ResetPasswordForm";
 export { ConfirmResetPasswordForm } from "./components/ConfirmResetPasswordForm";
 export { WeightForm } from "./components/weight/WeightForm";
 export { WeightList } from "./components/weight/WeightList";
-export { GoalForm } from "./components/weight/GoalForm"; // Added
+export { GoalForm } from "./components/weight/GoalForm";
+export { GoalList } from "./components/weight/GoalList"; // Added
 export { LoadingSpinner } from "./components/LoadingSpinner";
 export { useLogin, formSchema as loginFormSchema } from "./hooks/useLogin";
 export type { LoginResponse } from "./hooks/useLogin";
@@ -30,4 +30,5 @@ export {
   formSchema as confirmResetPasswordFormSchema,
 } from "./hooks/useConfirmResetPassword";
 export type { FormValues as ConfirmResetPasswordFormValues } from "./hooks/useConfirmResetPassword";
-export { useWeightGoal } from "./hooks/useWeightGoal"; // Added
+export { useWeightGoal } from "./hooks/useWeightGoal";
+export { useGoalList } from "./hooks/useGoalList";

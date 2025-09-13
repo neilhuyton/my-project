@@ -1,6 +1,6 @@
 // packages/site1/src/pages/Goals.tsx
 import { trpc } from "../trpc";
-import { GoalForm, LoadingSpinner } from "@my-project/ui";
+import { GoalForm, GoalList, LoadingSpinner } from "@my-project/ui";
 import { useNavigate } from "@tanstack/react-router";
 import type { GoalInput, GoalResponse, UpdateGoalInput } from "@my-project/api";
 
@@ -19,6 +19,7 @@ function Goals() {
     onSuccess: async () => {
       await utils.weight.getCurrentGoal.invalidate();
       await utils.weight.getWeights.invalidate();
+      await utils.weight.getGoals.invalidate(); // Added to refresh GoalList
     },
     onError: (error: GoalMutationError) => {
       if (error.message.includes("UNAUTHORIZED")) {
@@ -31,6 +32,7 @@ function Goals() {
     onSuccess: async () => {
       await utils.weight.getCurrentGoal.invalidate();
       await utils.weight.getWeights.invalidate();
+      await utils.weight.getGoals.invalidate(); // Added to refresh GoalList
     },
     onError: (error: GoalMutationError) => {
       if (error.message.includes("UNAUTHORIZED")) {
@@ -78,6 +80,7 @@ function Goals() {
         }
         currentGoal={currentGoal ?? null}
       />
+      <GoalList />
     </div>
   );
 }

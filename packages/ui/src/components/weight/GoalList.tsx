@@ -1,0 +1,96 @@
+// packages/ui/src/components/weight/GoalList.tsx
+import { useGoalList } from "../../hooks/useGoalList";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+import { LoadingSpinner } from "../LoadingSpinner";
+
+export function GoalList() {
+  const { goals, isLoading, isError, error, formatDate } = useGoalList();
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-6">
+        <LoadingSpinner size="md" testId="goal-list-loading" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-4xl rounded-lg border border-border bg-card p-6 shadow-sm">
+      <h2
+        className="text-xl font-bold text-foreground mb-6"
+        role="heading"
+        aria-level={1}
+      >
+        Past Weight Goals
+      </h2>
+      <Table className="border border-border rounded-lg">
+        <TableHeader>
+          <TableRow className="hover:bg-muted/50 rounded-t-lg">
+            <TableHead className="h-10 px-4 text-left font-semibold text-foreground bg-muted/50">
+              Goal Weight (kg)
+            </TableHead>
+            <TableHead className="h-10 px-4 text-left font-semibold text-foreground bg-muted/50">
+              Set Date
+            </TableHead>
+            <TableHead className="h-10 px-4 text-right font-semibold text-foreground bg-muted/50">
+              Reached Date
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {goals && goals.length > 0 ? (
+            goals.map((goal, index) => (
+              <TableRow
+                key={goal.id}
+                data-testid={`goal-row-${goal.id}`}
+                className={cn(
+                  "hover:bg-muted/50",
+                  index === goals.length - 1 && "rounded-b-lg"
+                )}
+              >
+                <TableCell className="p-4 text-foreground">
+                  {goal.goalWeightKg.toFixed(2)}
+                </TableCell>
+                <TableCell className="p-4 text-foreground">
+                  {formatDate(goal.goalSetAt)}
+                </TableCell>
+                <TableCell className="p-4 text-foreground text-right">
+                  {goal.reachedAt ? formatDate(goal.reachedAt) : "Not Reached"}
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow
+              className="hover:bg-muted/50 rounded-b-lg"
+              data-testid="no-goals-message"
+            >
+              <TableCell
+                colSpan={3}
+                className="p-4 text-center text-muted-foreground"
+              >
+                No weight goals found
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      {isError && (
+        <p
+          role="alert"
+          className="text-sm text-center text-destructive mt-4"
+          data-testid="error-message"
+        >
+          Error: {error?.message || "An unexpected error occurred"}
+        </p>
+      )}
+    </div>
+  );
+}
