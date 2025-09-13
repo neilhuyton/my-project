@@ -5,22 +5,24 @@ import {
   ResetPasswordForm,
   ConfirmResetPasswordForm,
   WeightForm,
-  GoalForm, // Kept for potential future use, but not needed here
+  GoalForm,
+  Navigation, // Add this import
 } from "@my-project/ui";
 import Weight from "../pages/Weight";
-import Goals from "../pages/Goals"; // Added import
+import Goals from "../pages/Goals";
+import Stats from "../pages/Stats";
 import {
   createRootRoute,
   createRoute,
   redirect,
   useNavigate,
+  Outlet, // Add Outlet for layout
 } from "@tanstack/react-router";
 import { trpcClient } from "../trpc";
 import { useAuthStore } from "../store/authStore";
 import { jwtDecode } from "jwt-decode";
-import type { WeightInput } from "@my-project/api"; // Kept for WeightForm, no Goal types needed here
+import type { WeightInput } from "@my-project/api";
 
-// Define the shape of the decoded JWT token
 interface DecodedToken {
   userId: string;
   email: string;
@@ -28,7 +30,6 @@ interface DecodedToken {
   exp: number;
 }
 
-// Authentication check function
 const checkAuth = () => {
   const { isLoggedIn, token } = useAuthStore.getState();
   if (!isLoggedIn || !token) {
@@ -46,22 +47,26 @@ const checkAuth = () => {
   }
 };
 
-// Define root route without a default component
 const rootRoute = createRootRoute({
   errorComponent: (props) => (
     <div>
       An error occurred. Please try again. {JSON.stringify(props.error)}
     </div>
   ),
+  component: () => (
+    <>
+      <Navigation /> {/* Render Navigation here */}
+      <Outlet /> {/* Render child routes */}
+    </>
+  ),
 });
 
-// Define routes
 export const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
   beforeLoad: () => {
     if (!checkAuth()) {
-      return; // Allow trpcClient to attempt refresh
+      return;
     }
   },
   component: () => <div>Weight Dashboard</div>,
@@ -144,7 +149,7 @@ export const weightRoute = createRoute({
   path: "/weight",
   beforeLoad: () => {
     if (!checkAuth()) {
-      return; // Allow trpcClient to attempt refresh
+      return;
     }
   },
   component: Weight,
@@ -155,10 +160,21 @@ export const goalsRoute = createRoute({
   path: "/goals",
   beforeLoad: () => {
     if (!checkAuth()) {
-      return; // Allow trpcClient to attempt refresh
+      return;
     }
   },
-  component: Goals, // Use Goals component
+  component: Goals,
+});
+
+export const statsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/stats",
+  beforeLoad: () => {
+    if (!checkAuth()) {
+      return;
+    }
+  },
+  component: Stats,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -169,6 +185,7 @@ const routeTree = rootRoute.addChildren([
   confirmResetPasswordRoute,
   weightRoute,
   goalsRoute,
+  statsRoute,
 ]);
 
 export { routeTree };

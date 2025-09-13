@@ -7,7 +7,6 @@ import { RouterProvider } from "@tanstack/react-router";
 import { router } from "./router";
 import "@my-project/ui/index.css";
 
-// Root component to wrap providers
 const Root = ({
   queryClient,
   trpcClient,

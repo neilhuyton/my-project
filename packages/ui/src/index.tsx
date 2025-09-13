@@ -1,3 +1,4 @@
+// packages/ui/src/index.tsx
 import "./index.css";
 export * from "./components/ui/form";
 export * from "./components/ui/input";
@@ -11,8 +12,9 @@ export { ConfirmResetPasswordForm } from "./components/ConfirmResetPasswordForm"
 export { WeightForm } from "./components/weight/WeightForm";
 export { WeightList } from "./components/weight/WeightList";
 export { GoalForm } from "./components/weight/GoalForm";
-export { GoalList } from "./components/weight/GoalList"; // Added
+export { GoalList } from "./components/weight/GoalList";
 export { LoadingSpinner } from "./components/LoadingSpinner";
+export { default as Navigation } from "./components/Navigation";
 export { useLogin, formSchema as loginFormSchema } from "./hooks/useLogin";
 export type { LoginResponse } from "./hooks/useLogin";
 export {
