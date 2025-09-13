@@ -6,10 +6,12 @@ import {
   beforeAll,
   afterAll,
   afterEach,
+  beforeEach,
   vi,
 } from "vitest";
 import { screen, waitFor, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { server } from "../__mocks__/server";
 import {
@@ -18,7 +20,7 @@ import {
   weightUpdateGoalHandler,
 } from "../__mocks__/handlers";
 import { GoalForm } from "../src/components/weight/GoalForm";
-import { useWeightGoal } from "../src/hooks/useWeightGoal";
+import type { GoalInput, GoalResponse, UpdateGoalInput } from "@my-project/api";
 import {
   RouterProvider,
   createRouter,
@@ -27,33 +29,41 @@ import {
   createRoute,
 } from "@tanstack/react-router";
 import { renderWithProviders } from "./utils/setup";
-
-// Mock LoadingSpinner
-vi.mock("../src/components/LoadingSpinner", () => ({
-  LoadingSpinner: ({ testId }: { testId: string }) => (
-    <div data-testid={testId}>Loading...</div>
-  ),
-}));
+import { trpcClient } from "../src/trpc";
 
 describe("GoalForm Component", { timeout: 10000 }, () => {
-  const setupRouter = () => {
+  const mockOnSuccess = vi.fn();
+  const mockOnError = vi.fn();
+  const mockOnMutate = vi.fn();
+  const mockNavigate = vi.fn();
+
+  const setupRouter = (currentGoal: GoalResponse | null = null) => {
     const rootRoute = createRootRoute();
-    const WeightGoalComponent = () => {
-      const weightGoal = useWeightGoal();
-      return <GoalForm weightGoal={weightGoal} />;
-    };
-    const weightRoute = createRoute({
+    const goalRoute = createRoute({
       getParentRoute: () => rootRoute,
-      path: "/weight",
-      component: WeightGoalComponent,
+      path: "/goals",
+      component: () => (
+        <GoalForm
+          setGoalMutation={(data: GoalInput) =>
+            trpcClient.weight.setGoal.mutate(data) as Promise<GoalResponse>
+          }
+          updateGoalMutation={(data: UpdateGoalInput) =>
+            trpcClient.weight.updateGoal.mutate(data) as Promise<GoalResponse>
+          }
+          currentGoal={currentGoal}
+          onSuccess={mockOnSuccess}
+          onError={mockOnError}
+          onMutate={mockOnMutate}
+        />
+      ),
     });
     const loginRoute = createRoute({
       getParentRoute: () => rootRoute,
       path: "/login",
       component: () => <div data-testid="login-page">Login Page</div>,
     });
-    const routeTree = rootRoute.addChildren([weightRoute, loginRoute]);
-    const history = createMemoryHistory({ initialEntries: ["/weight"] });
+    const routeTree = rootRoute.addChildren([goalRoute, loginRoute]);
+    const history = createMemoryHistory({ initialEntries: ["/goals"] });
     const testRouter = createRouter({ routeTree, history });
     return { history, testRouter };
   };
@@ -63,6 +73,10 @@ describe("GoalForm Component", { timeout: 10000 }, () => {
   });
 
   beforeEach(() => {
+    vi.clearAllMocks();
+    vi.spyOn(require("@tanstack/react-router"), "useNavigate").mockReturnValue(
+      mockNavigate
+    );
     server.use(
       weightGetCurrentGoalHandler,
       weightSetGoalHandler,
@@ -73,14 +87,14 @@ describe("GoalForm Component", { timeout: 10000 }, () => {
 
   afterEach(() => {
     server.resetHandlers();
+    cleanup();
   });
 
   afterAll(() => {
     server.close();
   });
 
-  it("renders loading spinner while fetching goal", async () => {
-    localStorage.setItem("token", "mock-token-test-user-id");
+  it("renders GoalForm with correct content", async () => {
     const { testRouter } = setupRouter();
 
     await act(async () => {
@@ -89,38 +103,229 @@ describe("GoalForm Component", { timeout: 10000 }, () => {
 
     await waitFor(
       () => {
-        expect(screen.getByTestId("goal-loading")).toBeInTheDocument();
-      },
-      { timeout: 5000, interval: 100 }
-    );
-  });
-
-  it("displays goal form with correct content", async () => {
-    localStorage.setItem("token", "mock-token-test-user-id");
-    const { testRouter } = setupRouter();
-
-    await act(async () => {
-      renderWithProviders(<RouterProvider router={testRouter} />);
-    });
-
-    await waitFor(
-      () => {
-        expect(screen.queryByTestId("goal-loading")).not.toBeInTheDocument();
+        expect(screen.getByTestId("goal-weight-form")).toBeInTheDocument();
         expect(screen.getByTestId("goal-weight-label")).toHaveTextContent(
           "Goal Weight (kg)"
         );
-        expect(screen.getByTestId("goal-weight-input")).toBeInTheDocument();
-        expect(screen.getByTestId("submit-button")).toHaveTextContent(
-          "Set Goal"
-        );
-        expect(screen.queryByTestId("goal-message")).not.toBeInTheDocument();
-        expect(screen.queryByTestId("error-message")).not.toBeInTheDocument();
+        expect(
+          screen.getByPlaceholderText("Enter goal weight in kg")
+        ).toBeInTheDocument();
+        expect(screen.getByTestId("submit-button")).toHaveTextContent("Set Goal");
       },
-      { timeout: 5000, interval: 100 }
+      { timeout: 1000, interval: 100 }
     );
   });
 
-  it("displays error when fetching goal fails", async () => {
+  it("displays current goal when provided", async () => {
+    const currentGoal: GoalResponse = {
+      id: "goal-1",
+      goalWeightKg: 75,
+      goalSetAt: "2025-01-01T00:00:00Z",
+      reachedAt: null,
+    };
+    const { testRouter } = setupRouter(currentGoal);
+
+    await act(async () => {
+      renderWithProviders(<RouterProvider router={testRouter} />);
+    });
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("current-goal")).toHaveTextContent(
+          `Current Goal: 75 kg (Set on 1/1/2025)`
+        );
+        expect(screen.getByTestId("submit-button")).toHaveTextContent(
+          "Update Goal"
+        );
+      },
+      { timeout: 1000, interval: 100 }
+    );
+  });
+
+  it("successfully submits a goal and calls onSuccess", async () => {
+    localStorage.setItem("token", "mock-token-empty-user-id");
+    const { testRouter } = setupRouter();
+
+    await act(async () => {
+      renderWithProviders(<RouterProvider router={testRouter} />);
+    });
+
+    const form = screen.getByTestId("goal-weight-form");
+    const weightInput = screen.getByTestId("goal-weight-input");
+
+    await act(async () => {
+      await userEvent.type(weightInput, "70.5", { delay: 10 });
+      await form.dispatchEvent(new Event("submit", { bubbles: true }));
+    });
+
+    await waitFor(
+      () => {
+        expect(mockOnMutate).toHaveBeenCalled();
+        expect(mockOnSuccess).toHaveBeenCalledWith({
+          id: "new-goal-id",
+          goalWeightKg: 70.5,
+          goalSetAt: "2025-09-13T00:00:00Z",
+          reachedAt: null,
+          userId: "empty-user-id",
+        });
+        expect(mockOnError).not.toHaveBeenCalled();
+        expect(screen.getByTestId("goal-error")).toHaveTextContent(
+          "Goal set successfully!"
+        );
+        expect(screen.getByTestId("goal-error")).toHaveClass("text-green-500");
+      },
+      { timeout: 2000, interval: 100 }
+    );
+  });
+
+  it("successfully updates a goal and calls onSuccess", async () => {
+    localStorage.setItem("token", "mock-token-test-user-id");
+    const currentGoal: GoalResponse = {
+      id: "goal-1",
+      goalWeightKg: 75,
+      goalSetAt: "2025-01-01T00:00:00Z",
+      reachedAt: null,
+    };
+    const { testRouter } = setupRouter(currentGoal);
+
+    await act(async () => {
+      renderWithProviders(<RouterProvider router={testRouter} />);
+    });
+
+    const form = screen.getByTestId("goal-weight-form");
+    const weightInput = screen.getByTestId("goal-weight-input");
+
+    await act(async () => {
+      await userEvent.type(weightInput, "70.5", { delay: 10 });
+      await form.dispatchEvent(new Event("submit", { bubbles: true }));
+    });
+
+    await waitFor(
+      () => {
+        expect(mockOnMutate).toHaveBeenCalled();
+        expect(mockOnSuccess).toHaveBeenCalledWith({
+          id: "goal-1",
+          goalWeightKg: 70.5,
+          goalSetAt: "2025-08-28T00:00:00Z",
+          reachedAt: null,
+          userId: "test-user-id",
+        });
+        expect(mockOnError).not.toHaveBeenCalled();
+        expect(screen.getByTestId("goal-error")).toHaveTextContent(
+          "Goal updated successfully!"
+        );
+        expect(screen.getByTestId("goal-error")).toHaveClass("text-green-500");
+      },
+      { timeout: 2000, interval: 100 }
+    );
+  });
+
+  it("displays error for non-positive goal weight submission", async () => {
+    localStorage.setItem("token", "mock-token-empty-user-id");
+    const { testRouter } = setupRouter();
+
+    await act(async () => {
+      renderWithProviders(<RouterProvider router={testRouter} />);
+    });
+
+    const form = screen.getByTestId("goal-weight-form");
+    const weightInput = screen.getByTestId("goal-weight-input");
+
+    await act(async () => {
+      await userEvent.type(weightInput, "-1", { delay: 10 });
+      await form.dispatchEvent(new Event("submit", { bubbles: true }));
+    });
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("goal-error")).toHaveTextContent(
+          "Goal weight must be a positive number."
+        );
+        expect(screen.getByTestId("goal-error")).toHaveClass("text-red-500");
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+        expect(mockOnError).toHaveBeenCalledWith(
+          "Goal weight must be a positive number."
+        );
+      },
+      { timeout: 1000, interval: 100 }
+    );
+  });
+
+  it("displays error for goal weight with too many decimal places", async () => {
+    localStorage.setItem("token", "mock-token-empty-user-id");
+    const { testRouter } = setupRouter();
+
+    await act(async () => {
+      renderWithProviders(<RouterProvider router={testRouter} />);
+    });
+
+    const form = screen.getByTestId("goal-weight-form");
+    const weightInput = screen.getByTestId("goal-weight-input");
+
+    await act(async () => {
+      await userEvent.type(weightInput, "70.123", { delay: 10 });
+      await form.dispatchEvent(new Event("submit", { bubbles: true }));
+    });
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("goal-error")).toHaveTextContent(
+          "Goal weight can have up to two decimal places."
+        );
+        expect(screen.getByTestId("goal-error")).toHaveClass("text-red-500");
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+        expect(mockOnError).toHaveBeenCalledWith(
+          "Goal weight can have up to two decimal places."
+        );
+      },
+      { timeout: 1000, interval: 100 }
+    );
+  });
+
+  it("clears error message on input change", async () => {
+    localStorage.setItem("token", "mock-token-empty-user-id");
+    const { testRouter } = setupRouter();
+
+    await act(async () => {
+      renderWithProviders(<RouterProvider router={testRouter} />);
+    });
+
+    const form = screen.getByTestId("goal-weight-form");
+    const weightInput = screen.getByTestId("goal-weight-input");
+
+    await act(async () => {
+      await userEvent.type(weightInput, "-1", { delay: 10 });
+      await form.dispatchEvent(new Event("submit", { bubbles: true }));
+    });
+
+    await waitFor(
+      () => {
+        expect(screen.getByTestId("goal-error")).toHaveTextContent(
+          "Goal weight must be a positive number."
+        );
+        expect(screen.getByTestId("goal-error")).toHaveClass("text-red-500");
+        expect(mockOnError).toHaveBeenCalledWith(
+          "Goal weight must be a positive number."
+        );
+      },
+      { timeout: 1000, interval: 100 }
+    );
+
+    await act(async () => {
+      await userEvent.clear(weightInput);
+      await userEvent.type(weightInput, "70.5", { delay: 10 });
+    });
+
+    await waitFor(
+      () => {
+        expect(screen.queryByTestId("goal-error")).toBeNull();
+        expect(mockOnError).toHaveBeenCalledTimes(1);
+      },
+      { timeout: 1000, interval: 100 }
+    );
+  });
+
+  it("displays unauthorized error and calls onError", async () => {
     localStorage.setItem("token", "mock-token-error-user-id");
     const { testRouter } = setupRouter();
 
@@ -128,111 +333,27 @@ describe("GoalForm Component", { timeout: 10000 }, () => {
       renderWithProviders(<RouterProvider router={testRouter} />);
     });
 
-    await waitFor(
-      () => {
-        expect(screen.queryByTestId("goal-loading")).not.toBeInTheDocument();
-        expect(screen.getByTestId("error-message")).toHaveTextContent(
-          "Error loading goal: Unauthorized: Invalid user ID"
-        );
-      },
-      { timeout: 5000, interval: 100 }
-    );
-  });
-
-  it("submits new goal successfully", async () => {
-    localStorage.setItem("token", "mock-token-empty-user-id");
-    const { testRouter } = setupRouter();
-
-    await act(async () => {
-      renderWithProviders(<RouterProvider router={testRouter} />);
-    });
-
-    await waitFor(
-      () => {
-        expect(screen.queryByTestId("goal-loading")).not.toBeInTheDocument();
-        expect(screen.getByTestId("goal-weight-input")).toBeInTheDocument();
-      },
-      { timeout: 5000, interval: 100 }
-    );
-
     const form = screen.getByTestId("goal-weight-form");
+    const weightInput = screen.getByTestId("goal-weight-input");
+
     await act(async () => {
-      await userEvent.type(screen.getByTestId("goal-weight-input"), "65.00");
+      await userEvent.type(weightInput, "70.5", { delay: 10 });
       await form.dispatchEvent(new Event("submit", { bubbles: true }));
     });
 
     await waitFor(
       () => {
-        expect(screen.getByTestId("goal-message")).toHaveTextContent(
-          "Goal set successfully!"
+        expect(mockOnMutate).toHaveBeenCalled();
+        expect(mockOnError).toHaveBeenCalledWith(
+          "Unauthorized: Invalid user ID"
         );
-      },
-      { timeout: 5000, interval: 100 }
-    );
-  });
-
-  it("updates existing goal successfully", async () => {
-    localStorage.setItem("token", "mock-token-test-user-id");
-    const { testRouter } = setupRouter();
-
-    await act(async () => {
-      renderWithProviders(<RouterProvider router={testRouter} />);
-    });
-
-    await waitFor(
-      () => {
-        expect(screen.queryByTestId("goal-loading")).not.toBeInTheDocument();
-        expect(screen.getByTestId("goal-weight-input")).toBeInTheDocument();
-      },
-      { timeout: 5000, interval: 100 }
-    );
-
-    const form = screen.getByTestId("goal-weight-form");
-    await act(async () => {
-      await userEvent.clear(screen.getByTestId("goal-weight-input"));
-      await userEvent.type(screen.getByTestId("goal-weight-input"), "70.00");
-      await form.dispatchEvent(new Event("submit", { bubbles: true }));
-    });
-
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("goal-message")).toHaveTextContent(
-          "Goal updated successfully!"
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+        expect(screen.getByTestId("goal-error")).toHaveTextContent(
+          "Please log in to set a goal."
         );
+        expect(screen.getByTestId("goal-error")).toHaveClass("text-red-500");
       },
-      { timeout: 5000, interval: 100 }
-    );
-  });
-
-  it("displays error for invalid goal weight", async () => {
-    localStorage.setItem("token", "mock-token-empty-user-id");
-    const { testRouter } = setupRouter();
-
-    await act(async () => {
-      renderWithProviders(<RouterProvider router={testRouter} />);
-    });
-
-    await waitFor(
-      () => {
-        expect(screen.queryByTestId("goal-loading")).not.toBeInTheDocument();
-        expect(screen.getByTestId("goal-weight-input")).toBeInTheDocument();
-      },
-      { timeout: 5000, interval: 100 }
-    );
-
-    const form = screen.getByTestId("goal-weight-form");
-    await act(async () => {
-      await userEvent.type(screen.getByTestId("goal-weight-input"), "-1");
-      await form.dispatchEvent(new Event("submit", { bubbles: true }));
-    });
-
-    await waitFor(
-      () => {
-        expect(screen.getByTestId("goal-message")).toHaveTextContent(
-          "Goal weight must be a positive number"
-        );
-      },
-      { timeout: 5000, interval: 100 }
+      { timeout: 2000, interval: 100 }
     );
   });
 });

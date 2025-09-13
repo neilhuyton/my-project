@@ -15,7 +15,7 @@ export const weightSetGoalHandler = http.post(
     }
     const { userId } = authResult as AuthenticatedUser;
     const body = await request.json();
-    const { goalWeightKg } = body as { goalWeightKg: number }; // Updated: Direct destructuring
+    const { goalWeightKg } = body as { goalWeightKg: number };
 
     if (userId === "empty-user-id" && goalWeightKg > 0) {
       return HttpResponse.json(
