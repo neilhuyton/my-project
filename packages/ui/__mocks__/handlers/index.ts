@@ -1,3 +1,4 @@
+// packages/ui/__mocks__/handlers/index.ts
 import { http, HttpResponse } from "msw";
 import { loginHandler } from "./login";
 import { registerHandler } from "./register";
@@ -10,6 +11,8 @@ import { weightCreateHandler } from "./weightCreate";
 import { weightGetCurrentGoalHandler } from "./weightGetCurrentGoal";
 import { weightGetWeightsHandler } from "./weightGetWeights";
 import { weightDeleteHandler } from "./weightDelete";
+import { weightSetGoalHandler } from "./weightSetGoal";
+import { weightUpdateGoalHandler } from "./weightUpdateGoal";
 
 export const debugHandler = http.all("*", () => {
   return HttpResponse.json({ error: "Unhandled request" }, { status: 404 });
@@ -25,6 +28,8 @@ export const handlers = [
   weightGetCurrentGoalHandler,
   weightGetWeightsHandler,
   weightDeleteHandler,
+  weightSetGoalHandler,
+  weightUpdateGoalHandler,
   debugHandler,
 ];
 
@@ -38,4 +43,6 @@ export {
   weightGetCurrentGoalHandler,
   weightGetWeightsHandler,
   weightDeleteHandler,
+  weightSetGoalHandler,
+  weightUpdateGoalHandler,
 };

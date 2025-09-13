@@ -4,13 +4,14 @@ export * from "./components/ui/form";
 export * from "./components/ui/input";
 export * from "./components/ui/button";
 export * from "./components/ui/label";
-export * from "./components/ui/table"; // Added for WeightList table components
+export * from "./components/ui/table";
 export { LoginForm } from "./components/LoginForm";
 export { Register } from "./components/Register";
 export { ResetPasswordForm } from "./components/ResetPasswordForm";
 export { ConfirmResetPasswordForm } from "./components/ConfirmResetPasswordForm";
 export { WeightForm } from "./components/weight/WeightForm";
-export { WeightList } from "./components/weight/WeightList"; // Added
+export { WeightList } from "./components/weight/WeightList";
+export { GoalForm } from "./components/weight/GoalForm"; // Added
 export { LoadingSpinner } from "./components/LoadingSpinner";
 export { useLogin, formSchema as loginFormSchema } from "./hooks/useLogin";
 export type { LoginResponse } from "./hooks/useLogin";
@@ -29,3 +30,4 @@ export {
   formSchema as confirmResetPasswordFormSchema,
 } from "./hooks/useConfirmResetPassword";
 export type { FormValues as ConfirmResetPasswordFormValues } from "./hooks/useConfirmResetPassword";
+export { useWeightGoal } from "./hooks/useWeightGoal"; // Added

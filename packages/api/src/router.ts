@@ -1,3 +1,4 @@
+// packages/api/src/router.ts
 import { router } from "./trpc";
 import { loginProcedure } from "./procedures/auth/login";
 import { registerProcedure } from "./procedures/auth/register";
