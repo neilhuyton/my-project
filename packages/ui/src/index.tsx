@@ -15,6 +15,7 @@ export { GoalForm } from "./components/weight/GoalForm";
 export { GoalList } from "./components/weight/GoalList";
 export { LoadingSpinner } from "./components/LoadingSpinner";
 export { default as Navigation } from "./components/Navigation";
+export { default as ProfileIcon } from "./components/ProfileIcon"; // Add this line
 export { useLogin, formSchema as loginFormSchema } from "./hooks/useLogin";
 export type { LoginResponse } from "./hooks/useLogin";
 export {
