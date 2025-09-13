@@ -1,9 +1,9 @@
 // packages/site1/src/components/Root.tsx
 import { Outlet, useLocation } from "@tanstack/react-router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { trpc, trpcClient, queryClient } from "./trpc";
 import { useAuthStore } from "./store/authStore";
-import { Navigation } from "@my-project/ui";
+import { Navigation, ProfileIcon } from "@my-project/ui";
 
 const publicRoutes = [
   "/login",
@@ -30,7 +30,7 @@ function Root() {
               <div className="flex items-center gap-2">
                 {/* Add ThemeToggle, ColorThemeToggle if implemented */}
               </div>
-              {/* Add ProfileIcon if implemented */}
+              <ProfileIcon />
             </header>
           )}
           <main
