@@ -1,4 +1,3 @@
-// packages/ui/eslint.config.js
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import tseslint from "typescript-eslint";
@@ -11,8 +10,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default tseslint.config(
-  // Local ignores for this package's dist
-  { ignores: ["dist"] },
+  // Local ignores for this package's dist and shadcn/ui components
+  {
+    ignores: ["dist", "src/components/ui/**/*"],
+  },
 
   // Global settings (e.g., React version detect)
   {
@@ -32,10 +33,10 @@ export default tseslint.config(
       parser: tseslint.parser,
       parserOptions: {
         project: "./tsconfig.json",
-        tsconfigRootDir: __dirname, // Ensures relative resolution from eslint.config.js
+        tsconfigRootDir: __dirname,
       },
       globals: {
-        ...globals.node, // Node-specific globals for tests/mocks
+        ...globals.node,
       },
     },
     plugins: {
@@ -52,10 +53,10 @@ export default tseslint.config(
       parser: tseslint.parser,
       parserOptions: {
         project: "./tsconfig.json",
-        tsconfigRootDir: __dirname, // Ensures relative resolution from eslint.config.js
+        tsconfigRootDir: __dirname,
       },
       globals: {
-        ...globals.node, // Node-specific globals if needed
+        ...globals.node,
       },
     },
     plugins: {
@@ -63,13 +64,13 @@ export default tseslint.config(
       "react-hooks": reactHooks,
     },
     rules: {
-      "react/prop-types": "off",
+      "react/prop-types": "off", // Explicitly disable PropTypes for TypeScript
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
     },
   },
 
   // Extend with React recommended configs
-  ...[react.configs.flat.recommended], // Wrap in array for spread
+  ...[react.configs.flat.recommended],
   react.configs.flat["jsx-runtime"]
 );

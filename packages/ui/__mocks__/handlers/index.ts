@@ -6,8 +6,10 @@ import {
   resetPasswordRequestFailureHandler,
 } from "./resetPasswordRequest";
 import { resetPasswordConfirmHandler } from "./resetPasswordConfirm";
-import { weightCreateHandler } from "./weightCreate"; // Corrected path
+import { weightCreateHandler } from "./weightCreate";
 import { weightGetCurrentGoalHandler } from "./weightGetCurrentGoal";
+import { weightGetWeightsHandler } from "./weightGetWeights";
+import { weightDeleteHandler } from "./weightDelete";
 
 export const debugHandler = http.all("*", () => {
   return HttpResponse.json({ error: "Unhandled request" }, { status: 404 });
@@ -21,6 +23,8 @@ export const handlers = [
   resetPasswordConfirmHandler,
   weightCreateHandler,
   weightGetCurrentGoalHandler,
+  weightGetWeightsHandler,
+  weightDeleteHandler,
   debugHandler,
 ];
 
@@ -32,4 +36,6 @@ export {
   resetPasswordConfirmHandler,
   weightCreateHandler,
   weightGetCurrentGoalHandler,
+  weightGetWeightsHandler,
+  weightDeleteHandler,
 };

@@ -1,4 +1,3 @@
-// packages/ui/__mocks__/utils.ts
 import { HttpResponse } from "msw";
 import { z } from "zod";
 import * as jwt from "jsonwebtoken";
@@ -64,6 +63,12 @@ export function verifyJWT(token: string): { userId: string } | null {
     if (token === "mock-token-test-user-id") {
       return { userId: "test-user-id" };
     }
+    if (token === "mock-token-error-user-id") {
+      return { userId: "error-user-id" };
+    }
+    if (token === "mock-token-empty-user-id") {
+      return { userId: "empty-user-id" };
+    }
     return jwt.verify(token, process.env.JWT_SECRET || "your-secret-key") as {
       userId: string;
     };
@@ -98,6 +103,10 @@ export function authenticateRequest(
 ): AuthenticatedUser | Response {
   const authHeader = request.headers.get("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    // For weight.getWeights, return default userId to allow fetching weights
+    if (procedure === "weight.getWeights") {
+      return { userId: "test-user-id" };
+    }
     return createTRPCErrorResponse(
       0,
       "Unauthorized: User must be logged in",

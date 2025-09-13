@@ -1,3 +1,4 @@
+// packages/api/src/functions/trpc.ts
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { apiRouter } from "../router";
 import { HandlerEvent } from "@netlify/functions";
@@ -49,7 +50,6 @@ export const handler = async (event: HandlerEvent) => {
       log: ["query", "info", "warn", "error"],
     });
   } catch (error) {
-    console.error("Failed to create PrismaClient:", error);
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -74,7 +74,6 @@ export const handler = async (event: HandlerEvent) => {
       path ? `/${path}` : ""
     }${queryString ? `?${queryString}` : ""}`;
 
-    // Construct a minimal IncomingMessage object
     const req: Partial<IncomingMessage> = {
       headers,
       method: event.httpMethod,
@@ -90,9 +89,6 @@ export const handler = async (event: HandlerEvent) => {
       }),
       router: apiRouter,
       createContext: () => createContext({ req: req as IncomingMessage }),
-      onError: ({ error, path }) => {
-        console.error(`tRPC handler error for path ${path}:`, error);
-      },
     });
 
     const responseBody = await response.text();
@@ -102,7 +98,6 @@ export const handler = async (event: HandlerEvent) => {
       body: responseBody,
     };
   } catch (error) {
-    console.error("tRPC error:", error);
     return {
       statusCode: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

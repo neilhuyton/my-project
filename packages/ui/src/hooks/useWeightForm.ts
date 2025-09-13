@@ -1,4 +1,3 @@
-// packages/ui/src/hooks/useWeightForm.ts
 import { useState } from "react";
 
 export interface FormValues {
@@ -9,8 +8,9 @@ export interface FormValues {
 export interface WeightResponse {
   id: string;
   weightKg: number;
-  note?: string | null;
+  note: string | null; // Changed from note?: string | null to match API
   createdAt: string;
+  userId: string;
 }
 
 interface UseWeightFormProps {
@@ -88,9 +88,11 @@ export const useWeightForm = ({
         setTimeout(() => setShowConfetti(false), 7000);
       }
       onSuccess?.(response);
-    } catch (error: any) {
-      const errorMessage = error.message || "Failed to record weight";
-      const errorCode = error.data?.code;
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to record weight";
+      const errorCode =
+        error instanceof Error && "data" in error && (error.data as any)?.code;
       if (errorCode === "UNAUTHORIZED") {
         setMessage("Please log in to record a weight.");
       } else {
