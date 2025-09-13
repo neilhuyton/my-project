@@ -6,17 +6,16 @@ import {
   ConfirmResetPasswordForm,
   WeightForm,
   GoalForm,
-  Navigation, // Add this import
 } from "@my-project/ui";
 import Weight from "../pages/Weight";
 import Goals from "../pages/Goals";
 import Stats from "../pages/Stats";
+import Root from "../Root";
 import {
   createRootRoute,
   createRoute,
   redirect,
   useNavigate,
-  Outlet, // Add Outlet for layout
 } from "@tanstack/react-router";
 import { trpcClient } from "../trpc";
 import { useAuthStore } from "../store/authStore";
@@ -53,12 +52,7 @@ const rootRoute = createRootRoute({
       An error occurred. Please try again. {JSON.stringify(props.error)}
     </div>
   ),
-  component: () => (
-    <>
-      <Navigation /> {/* Render Navigation here */}
-      <Outlet /> {/* Render child routes */}
-    </>
-  ),
+  component: Root, // Use Root without props
 });
 
 export const homeRoute = createRoute({
