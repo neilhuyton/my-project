@@ -3,6 +3,9 @@ import { apiRouter } from "../router";
 import { HandlerEvent } from "@netlify/functions";
 import { PrismaClient } from "../../prisma/client";
 import { resolve } from "path";
+import { createContext } from "../context";
+import type { Context } from "../context";
+import { IncomingMessage } from "http";
 
 export const handler = async (event: HandlerEvent) => {
   const corsHeaders = {
@@ -71,6 +74,13 @@ export const handler = async (event: HandlerEvent) => {
       path ? `/${path}` : ""
     }${queryString ? `?${queryString}` : ""}`;
 
+    // Construct a minimal IncomingMessage object
+    const req: Partial<IncomingMessage> = {
+      headers,
+      method: event.httpMethod,
+      url,
+    };
+
     const response = await fetchRequestHandler({
       endpoint: "/trpc",
       req: new Request(url, {
@@ -79,10 +89,7 @@ export const handler = async (event: HandlerEvent) => {
         body: event.httpMethod !== "GET" && event.body ? event.body : undefined,
       }),
       router: apiRouter,
-      createContext: () => ({
-        siteId,
-        prisma,
-      }),
+      createContext: () => createContext({ req: req as IncomingMessage }),
       onError: ({ error, path }) => {
         console.error(`tRPC handler error for path ${path}:`, error);
       },

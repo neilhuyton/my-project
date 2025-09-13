@@ -1,3 +1,4 @@
+// packages/ui/src/trpc.ts
 import { createTRPCReact } from "@trpc/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import { httpLink } from "@trpc/client";
@@ -10,6 +11,10 @@ export const trpcClient = trpc.createClient({
   links: [
     httpLink({
       url: "http://localhost:8888/.netlify/functions/trpc",
+      headers: () => {
+        const token = localStorage.getItem("token");
+        return token ? { Authorization: `Bearer ${token}` } : {};
+      },
     }),
   ],
 });

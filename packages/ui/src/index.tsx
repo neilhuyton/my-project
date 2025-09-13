@@ -7,6 +7,8 @@ export { LoginForm } from "./components/LoginForm";
 export { Register } from "./components/Register";
 export { ResetPasswordForm } from "./components/ResetPasswordForm";
 export { ConfirmResetPasswordForm } from "./components/ConfirmResetPasswordForm";
+export { WeightForm } from "./components/weight/WeightForm";
+export { LoadingSpinner } from "./components/LoadingSpinner";
 export { useLogin, formSchema as loginFormSchema } from "./hooks/useLogin";
 export type { LoginResponse } from "./hooks/useLogin";
 export {

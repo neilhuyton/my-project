@@ -16,22 +16,28 @@ export const trpcClient = trpc.createClient({
         "http://localhost:8888/.netlify/functions/trpc",
       headers: () => {
         const { token } = useAuthStore.getState();
+        console.log("trpcClient - Token:", token);
         return {
           "x-site-id": "site1",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         };
       },
       async fetch(input, init) {
+        console.log("trpcClient - Fetching:", input);
         const response = await fetch(input, init);
         if (response.status === 401) {
           const { refreshToken, userId } = useAuthStore.getState();
+          console.log("trpcClient - Attempting token refresh:", {
+            userId,
+            refreshToken,
+          });
           if (refreshToken && userId) {
             try {
               const { token: newToken } = await trpcClient.refresh.mutate({
                 refreshToken,
               });
+              console.log("trpcClient - New token:", newToken);
               useAuthStore.getState().login(userId, newToken, refreshToken);
-              // Retry the original request with the new token
               return fetch(input, {
                 ...init,
                 headers: {
@@ -40,11 +46,15 @@ export const trpcClient = trpc.createClient({
                   "x-site-id": "site1",
                 },
               });
-            } catch {
+            } catch (error) {
+              console.error("trpcClient - Token refresh failed:", error);
               useAuthStore.getState().logout();
               window.location.href = "/login";
             }
           } else {
+            console.log(
+              "trpcClient - No refreshToken or userId, redirecting to login"
+            );
             useAuthStore.getState().logout();
             window.location.href = "/login";
           }

@@ -2,6 +2,7 @@ import { publicProcedure } from "../../trpc";
 import { z } from "zod";
 import type { Context } from "../../trpc";
 import crypto from "crypto";
+import { TRPCError } from "@trpc/server";
 
 const twoDecimalPlaces = z
   .number()
@@ -29,8 +30,16 @@ export const weightCreateProcedure = publicProcedure
       input: z.infer<typeof weightInputSchema>;
       ctx: Context;
     }) => {
+      console.log("weightCreateProcedure - Context:", {
+        userId: ctx.userId,
+        siteId: ctx.siteId,
+      });
+      console.log("weightCreateProcedure - Input:", input);
       if (!ctx.userId) {
-        throw new Error("Unauthorized: User must be logged in");
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized: User must be logged in",
+        });
       }
 
       const weight = await ctx.prisma.weightMeasurement.create({

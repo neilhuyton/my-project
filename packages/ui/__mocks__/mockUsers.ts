@@ -1,3 +1,4 @@
+// packages/ui/__mocks__/mockUsers.ts
 import bcrypt from "bcryptjs";
 
 export interface MockUser {
