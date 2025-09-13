@@ -74,7 +74,7 @@ function Goals() {
       <GoalForm
         setGoalMutation={(data: GoalInput) => setGoalMutation.mutateAsync(data)}
         updateGoalMutation={(data: UpdateGoalInput) =>
-          updateGoalMutation.mutateAsync(data)
+          updateGoalMutation.mutateAsync(data) as Promise<GoalResponse>
         }
         currentGoal={currentGoal ?? null}
       />

@@ -5,8 +5,10 @@ import {
   ResetPasswordForm,
   ConfirmResetPasswordForm,
   WeightForm,
+  GoalForm, // Kept for potential future use, but not needed here
 } from "@my-project/ui";
-import Weight from "../pages/Weight"; // Added import
+import Weight from "../pages/Weight";
+import Goals from "../pages/Goals"; // Added import
 import {
   createRootRoute,
   createRoute,
@@ -16,7 +18,7 @@ import {
 import { trpcClient } from "../trpc";
 import { useAuthStore } from "../store/authStore";
 import { jwtDecode } from "jwt-decode";
-import type { WeightInput } from "@my-project/api";
+import type { WeightInput } from "@my-project/api"; // Kept for WeightForm, no Goal types needed here
 
 // Define the shape of the decoded JWT token
 interface DecodedToken {
@@ -145,7 +147,18 @@ export const weightRoute = createRoute({
       return; // Allow trpcClient to attempt refresh
     }
   },
-  component: Weight, // Use Weight component instead of WeightForm
+  component: Weight,
+});
+
+export const goalsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/goals",
+  beforeLoad: () => {
+    if (!checkAuth()) {
+      return; // Allow trpcClient to attempt refresh
+    }
+  },
+  component: Goals, // Use Goals component
 });
 
 const routeTree = rootRoute.addChildren([
@@ -155,6 +168,7 @@ const routeTree = rootRoute.addChildren([
   resetPasswordRoute,
   confirmResetPasswordRoute,
   weightRoute,
+  goalsRoute,
 ]);
 
 export { routeTree };
